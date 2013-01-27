@@ -1,16 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.syr.bytecast.fsys;
 
 import java.io.*;
 import java.util.*;
 
-/**
- *
- * @author shawn
- */
 public class FileReader {
     public void setFilepath(String file_path)
     {
@@ -36,6 +28,7 @@ public class FileReader {
         final int block_size = 16384;
         byte [] buff = new byte[block_size];
 
+        //Determine the file size and initialize the amount to read.
         int bytes_left = data_in.available();
         int amount_to_read = Math.min(bytes_left, block_size);
         
