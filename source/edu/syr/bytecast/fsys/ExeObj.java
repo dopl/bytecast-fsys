@@ -7,7 +7,7 @@ public class ExeObj {
         return m_entryPointIndex;
     }
      
-    void setEntryPoint(int entry_point) {
+    void setEntryPointIndex(int entry_point) {
         m_entryPointIndex = entry_point;
     }
     
