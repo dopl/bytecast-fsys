@@ -3,12 +3,12 @@ import java.util.*;
 
 public class ExeObj {
     
-    public ExeObjSegment getEntryPoint() {
-        return m_entryPoint;
+    public int getEntryPointIndex() {
+        return m_entryPointIndex;
     }
      
-    void setEntryPoint(ExeObjSegment entry_point) {
-        m_entryPoint = entry_point;
+    void setEntryPoint(int entry_point) {
+        m_entryPointIndex = entry_point;
     }
     
     public List<ExeObjSegment> getSegments() {
@@ -27,7 +27,7 @@ public class ExeObj {
         m_dependencies = dependencies;
     }   
     
-    private ExeObjSegment m_entryPoint;
+    private int m_entryPointIndex;
     private List<ExeObjSegment> m_segments;
     private List<ExeObjDependency> m_dependencies;
     
