@@ -31,22 +31,22 @@ Elf64_Sxword  8 8 Signed long integer
 
 public class ElfHeaderStruct {
           
-          public List<Byte>  e_ident;     /* ELF identification */
-          public short       e_type;      /* Object file type */
-          public short       e_machine;   /* Machine type */
-          public int         e_version;   /* Object file version */
-          public long        e_entry;     /* Entry point address */
-          public long        e_phoff;     /* Program header offset */
-          public long        e_shoff;     /* Section header offset */
-          public int         e_flags;     /* Processor-specific flags */
-          public short       e_ehsize;    /* ELF header size */
-          public short       e_phentsize; /* Size of program header entry */
-          public short       e_phnum;     /* Number of program header entries */
-          public short       e_shentsize; /* Size of section header entry */
-          public short       e_shnum;     /* Number of section header entries */
-          public short       e_shstrndx;  /* Section name string table index */
+    public List<Byte>  e_ident;     /* ELF identification */
+    public short       e_type;      /* Object file type */
+    public short       e_machine;   /* Machine type */
+    public int         e_version;   /* Object file version */
+    public long        e_entry;     /* Entry point address */
+    public long        e_phoff;     /* Program header offset */
+    public long        e_shoff;     /* Section header offset */
+    public int         e_flags;     /* Processor-specific flags */
+    public short       e_ehsize;    /* ELF header size */
+    public short       e_phentsize; /* Size of program header entry */
+    public short       e_phnum;     /* Number of program header entries */
+    public short       e_shentsize; /* Size of section header entry */
+    public short       e_shnum;     /* Number of section header entries */
+    public short       e_shstrndx;  /* Section name string table index */
           
-          public ElfHeaderStruct(){
-              e_ident = new ArrayList();
-          }
+    public ElfHeaderStruct(){
+        e_ident = new ArrayList();
+    }
 }
