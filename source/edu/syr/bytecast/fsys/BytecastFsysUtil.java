@@ -16,7 +16,7 @@ public class BytecastFsysUtil {
              System.out.println("bytesToLong: Index + size falls out of Byte array range");        
          }
          else{
-             for(int i = start; i < start + size; i++){
+             for(int i = start + size-1; i >= start; i--){
                 ret = ret << 8;
                 //System.out.printf("%02x\n", bytes.get(i));
                 //  System.out.printf("%08x\n", ret);
