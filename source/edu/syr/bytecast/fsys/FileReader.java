@@ -4,70 +4,77 @@ import java.io.*;
 import java.util.*;
 
 public class FileReader {
-    public void setFilepath(String file_path)
-    {
+
+    public void setFilepath(String file_path) {
         m_filepath = file_path;
     }
-    
-    public String getFilepath()
-    {
+
+    public String getFilepath() {
         return m_filepath;
     }
-    
-    public List<Byte> getContents() throws IOException
-    {
+
+    public boolean openFile() {
         //Open file, setup input stream.
-        File input_file = new File (m_filepath);
-        FileInputStream file_in = new FileInputStream(input_file);
-        DataInputStream data_in = new DataInputStream (file_in );
-        
+        m_inputFile = new File(m_filepath);
+        try {                                                                                                                      
+            m_fileIn = new FileInputStream(m_inputFile);
+            m_dataIn = new DataInputStream(m_fileIn);
+            m_fileSize = m_dataIn.available();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public boolean closeFile() {
+        try {
+            m_fileIn.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public int getFileSize() {
+        return m_fileSize;
+    }
+
+    public List<Byte> getContents() throws IOException {
+        return getContents(0, m_fileSize);
+    }
+    
+    public List<Byte> getContents(int offset, int size) throws IOException {
+
         //Setup return type.
         List<Byte> ret = new ArrayList<Byte>();
-        
-        //Setup read buffer.
-        final int block_size = 16384;
-        byte [] buff = new byte[block_size];
 
-        //Determine the file size and initialize the amount to read.
-        int bytes_left = data_in.available();
-        int amount_to_read = Math.min(bytes_left, block_size);
-        
-        while(amount_to_read > 0) {
-            try {
-                data_in.readFully(buff);
+        //Setup read buffer. Read block_size when possible for
+        //increased performance.
+        final int block_size = 16384;
+        byte[] buff = new byte[block_size];
+
+        //Start reading the file.
+        int bytes_read = 0;
+        while (bytes_read < size) {
+            
+            //Read the block size or what's left (whatever is smaller)
+            int read_size = Math.min(size-bytes_read, block_size);
+            m_dataIn.readFully(buff, offset + bytes_read, read_size);
+            
+            //Copy each byte into ret
+            for (int i = 0; i < read_size; i++) {
+                ret.add(buff[i]);
             }
-            catch(EOFException eof) {
-                //do nothing.
-            }
-            finally {
-                for(int i = 0; i < amount_to_read; i++)
-                {
-                    ret.add(buff[i]);
-                }
-                bytes_left = data_in.available();
-                amount_to_read = Math.min(bytes_left, block_size);
-            }
+            
+            bytes_read += read_size;
+            
         }
         return ret;
     }
     
-//    public static void main(String[] args)
-//    {
-//        FileReader test = new FileReader();
-//        test.setFilepath(("/home/shawn/test.bin"));
-//        List<Byte> result = new ArrayList<Byte>();
-//        try{
-//            result = test.getContents();
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println("error");
-//        }
-//        for(int i = 0; i < result.size(); i++)
-//        {
-//            System.out.println(Byte.toString(result.get(i)));
-//        }
-//        System.out.println("Done");
-//    }
     private String m_filepath;
+    private int m_fileSize;
+    private File m_inputFile;
+    private FileInputStream m_fileIn;
+    private DataInputStream m_dataIn;
 }

@@ -1,16 +1,20 @@
 package edu.syr.bytecast.fsys;
 
-public class ELFSectionHeaderEntryStruct {
-    public int     sh_name;
-    public int     sh_type;
-    public int     sh_link;
-    public int     sh_info;
-    public long    sh_flags;
-    public long    sh_addr;
-    public long    sh_offset;
-    public long    sh_size;
-    public long    sh_addralign;
-    public long    sh_entsize;
+public class ElfSectionHeaderEntryStruct {
+
+    //--------------------------------------------------------------------------
+    // Fields 
+    //--------------------------------------------------------------------------
+    public int     sh_name;         /* Section name */
+    public int     sh_type;         /* Section type */
+    public int     sh_link;         /* Link to other section */
+    public int     sh_info;         /* Miscellaneous information */
+    public long    sh_flags;        /* Section attributes */
+    public long    sh_addr;         /* Virtual address in memory */
+    public long    sh_offset;       /* Offset in file */
+    public long    sh_size;         /* Size of section */
+    public long    sh_addralign;    /* Address alignment boundary */
+    public long    sh_entsize;      /* Size of entries, if section has table */
     
     //--------------------------------------------------------------------------
     // Section Type (sh_type) Enumurations
