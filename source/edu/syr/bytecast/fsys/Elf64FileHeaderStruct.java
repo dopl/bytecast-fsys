@@ -29,7 +29,7 @@ Elf64_Sxword  8 8 Signed long integer
    Elf64_Half    e_shnum;      Number of section header entries 
    Elf64_Half    e_shstrndx;   Section name string table index */
 
-public class ElfHeaderStruct {
+public class Elf64FileHeaderStruct {
           
     public List<Byte>  e_ident;     /* ELF identification */
     public short       e_type;      /* Object file type */
@@ -46,7 +46,7 @@ public class ElfHeaderStruct {
     public short       e_shnum;     /* Number of section header entries */
     public short       e_shstrndx;  /* Section name string table index */
           
-    public ElfHeaderStruct(){
+    public Elf64FileHeaderStruct(){
         e_ident = new ArrayList();
     }
 }

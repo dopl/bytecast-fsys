@@ -2,13 +2,13 @@ package edu.syr.bytecast.fsys;
 
 import java.util.*;
 
-public class ElfSectionHeaderParser {
+public class Elf64SectionHeaderParser {
 
     //Size of the section header table.
     private final int ENTRY_SIZE = 512;
     
-    public ElfSectionHeaderStruct parseHeader(List<Byte> data) {
-        ElfSectionHeaderStruct ret = new ElfSectionHeaderStruct();
+    public Elf64SectionHeaderStruct parseHeader(List<Byte> data) {
+        Elf64SectionHeaderStruct ret = new Elf64SectionHeaderStruct();
 
         for (int i = 0; i < data.size() / ENTRY_SIZE; i++) {
             ret.m_headerEntries.add(parseEntry(data, i));
@@ -17,9 +17,9 @@ public class ElfSectionHeaderParser {
         return ret;
     }
 
-    private ElfSectionHeaderEntryStruct parseEntry(List<Byte> data, int index) {
+    private Elf64SectionHeaderEntryStruct parseEntry(List<Byte> data, int index) {
         
-        ElfSectionHeaderEntryStruct ret = new ElfSectionHeaderEntryStruct();
+        Elf64SectionHeaderEntryStruct ret = new Elf64SectionHeaderEntryStruct();
        
         int bytes_consumed  = 0;
         int current_field   = 0;

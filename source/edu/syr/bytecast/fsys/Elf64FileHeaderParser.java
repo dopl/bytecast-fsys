@@ -10,20 +10,20 @@ import java.io.*;
  *
  * @author adodds
  */
-public class ElfMainHeaderParser {
+public class Elf64FileHeaderParser {
     
     private List<Byte> m_elfData;
-    private ElfHeaderStruct m_elfMainHeader;
+    private Elf64FileHeaderStruct m_elfMainHeader;
     
-    public ElfMainHeaderParser(){
-        m_elfMainHeader = new ElfHeaderStruct();
+    public Elf64FileHeaderParser(){
+        m_elfMainHeader = new Elf64FileHeaderStruct();
     };
     
     public void setBinaryData(List<Byte> ElfData){
         m_elfData = ElfData;
     };
     
-    public ElfHeaderStruct getElfMainHeader(){
+    public Elf64FileHeaderStruct getElfMainHeader(){
         return m_elfMainHeader;
     };
     
@@ -93,7 +93,7 @@ public class ElfMainHeaderParser {
         
     }*/
     public static void  main(String args[]){
-        ElfMainHeaderParser test = new ElfMainHeaderParser();
+        Elf64FileHeaderParser test = new Elf64FileHeaderParser();
         List<Byte> list = new ArrayList() ;
         FileReader rd = new FileReader();
         rd.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/a.out");

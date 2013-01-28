@@ -1,6 +1,6 @@
 package edu.syr.bytecast.fsys;
 
-public class ElfSectionHeaderEntryStruct {
+public class Elf64SectionHeaderEntryStruct {
 
     //--------------------------------------------------------------------------
     // Fields 
