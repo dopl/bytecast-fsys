@@ -27,10 +27,10 @@ public class Elf64FileHeaderParser {
         return m_elfMainHeader;
     };
     
-    public boolean ElfMainParser(){
+    public boolean parse(){
         int ident_length = 16;
         
-        if(m_elfData == null || m_elfData.isEmpty()){
+        if(m_elfData == null || m_elfData.isEmpty() ||  m_elfData.size() < 64){
             return false;
         }
         
@@ -92,19 +92,28 @@ public class Elf64FileHeaderParser {
         test.ElfMainParser();
         
     }*/
+    @SuppressWarnings("empty-statement")
     public static void  main(String args[]){
         Elf64FileHeaderParser test = new Elf64FileHeaderParser();
         List<Byte> list = new ArrayList() ;
         FileReader rd = new FileReader();
-        rd.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/a.out");
-        try{
+        rd.setFilepath("/home/shawn/code/bytecast-fsys/documents/testcase1_input_files/a.out");
+        if(rd.openFile())
+        {
+          try{
             list = rd.getContents();
+            }
+            catch(IOException status){
+                System.out.println("Main: Error reading file");
+            }          
         }
-        catch(IOException status){
-            System.out.println("Main: File open failed");
+        else
+        {
+            System.out.println("Could not open file for reading");
         }
+
         test.setBinaryData(list);
-        test.ElfMainParser();
+        test.parse();
         test.printHeader();
         
     }
