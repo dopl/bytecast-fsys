@@ -18,7 +18,6 @@ public class Elf64ExeObjParser implements IBytecastFsys {
     @Override
     public ExeObj parse() throws IOException {
 
-
         FileReader file_reader = new FileReader();
         file_reader.setFilepath(m_filePath);
         if (file_reader.openFile()) {
@@ -29,13 +28,15 @@ public class Elf64ExeObjParser implements IBytecastFsys {
             file_header_parser = new Elf64FileHeaderParser();
             file_header_parser.setBinaryData(bin_elf_file_header);
 
-            if (file_header_parser.parse()) {
+            try {
+                file_header_parser.parse();
                 file_header_parser.printHeader();
-            } else {
-                System.out.println("Error");
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
             }
+
         } else {
-            throw new FileNotFoundException();
+            throw new IOException("Error opening file.");
         }
 
         return new ExeObj();
