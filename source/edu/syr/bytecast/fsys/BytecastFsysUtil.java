@@ -18,9 +18,9 @@ public class BytecastFsysUtil {
          else{
              for(int i = start + size-1; i >= start; i--){
                 ret = ret << 8;
-                //System.out.printf("%02x\n", bytes.get(i));
-                //  System.out.printf("%08x\n", ret);
-                ret = ret + bytes.get(i);
+                
+                //Logical AND to eliminate sign extension.
+                ret = ret + (0x00000000000000FF & bytes.get(i));
              }
          }
          //System.out.printf("%08x\n", ret);

@@ -1,6 +1,6 @@
-package edu.syr.bytecast.fsys;
+package edu.syr.bytecast.fsys.elf;
 
-public class Elf64FileHeaderStruct {
+public class ElfElfHeaderStruct {
     
     //--------------------------------------------------------------------------
     // Fields
@@ -20,6 +20,12 @@ public class Elf64FileHeaderStruct {
     public short       e_shentsize; /* Size of section header entry */
     public short       e_shnum;     /* Number of section header entries */
     public short       e_shstrndx;  /* Section name string table index */
+    
+    
+    public static final int[] ELF32_FIELD_SIZES = {2,2,4,4,4,4,4,2,2,2,2,2,2};
+    public static final int[] ELF64_FIELD_SIZES = {2,2,4,8,8,8,4,2,2,2,2,2,2};
+    public static final int   ELF32_FILE_HEADER_SIZE = 52;
+    public static final int   ELF64_FILE_HEADER_SIZE = 64;
     
     //--------------------------------------------------------------------------
     // Object File Classes Enumrations
