@@ -1,12 +1,6 @@
 package edu.syr.bytecast.fsys.elf;
 
-import edu.syr.bytecast.fsys.ExeObj;
-import edu.syr.bytecast.fsys.FileReader;
-import edu.syr.bytecast.fsys.IBytecastFsys;
-import edu.syr.bytecast.fsys.elf.ElfSectionHeaderParser;
-import edu.syr.bytecast.fsys.elf.ElfElfHeaderStruct;
-import edu.syr.bytecast.fsys.elf.ElfElfHeaderParser;
-import edu.syr.bytecast.fsys.elf.ElfSectionHeaderStruct;
+import edu.syr.bytecast.fsys.*;
 import java.io.*;
 import java.util.*;
 
@@ -25,7 +19,7 @@ public class ElfExeObjParser implements IBytecastFsys {
     @Override
     public ExeObj parse() throws IOException {
 
-        FileReader file_reader = new FileReader();
+        BytecastFileReader file_reader = new BytecastFileReader();
         file_reader.setFilepath(m_filePath);
         if (file_reader.openFile()) {
             List<Byte> bin_elf_file_header;

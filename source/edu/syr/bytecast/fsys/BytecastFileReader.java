@@ -3,7 +3,7 @@ package edu.syr.bytecast.fsys;
 import java.io.*;
 import java.util.*;
 
-public class FileReader {
+public class BytecastFileReader {
 
     public void setFilepath(String file_path) {
         m_filepath = file_path;
@@ -16,9 +16,7 @@ public class FileReader {
     public boolean openFile() {
         //Open file, setup input stream.
         try { 
-            m_inputFile = new RandomAccessFile(m_filepath,"r");                                                                                                                     
-            //m_fileIn = new FileInputStream(m_inputFile);
-            //m_dataIn = new DataInputStream(m_fileIn);
+            m_inputFile = new RandomAccessFile(m_filepath,"r");
             m_fileSize = m_inputFile.length();
             return true;
         } catch (IOException e) {

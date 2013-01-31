@@ -24,16 +24,14 @@ public class ElfSectionHeaderParser {
         }
         else
         {
-            throw new IOException("Invalid system architecture (32 or 64 bit only");
+            throw new IOException("Unsupported ELF architecture. ELF32 or "
+                                    + "ELF64 supported only");
         }       
     }
     
     public ElfSectionHeaderStruct parseHeader(List<Byte> data){
         ElfSectionHeaderStruct ret = new ElfSectionHeaderStruct();
-        
-        int entry_size;
-
-        
+ 
         for (int i = 0; i < data.size() / m_entrySize; i++) {
 
             ret.m_headerEntries.add(parseEntry(data, i));
@@ -46,9 +44,9 @@ public class ElfSectionHeaderParser {
     {
         for(int i = 0; i < input.m_headerEntries.size(); i++)
         {            
-            System.out.println("--------------------------");
-            System.out.println("Printing Entry " + i + ":");         
-            System.out.println("--------------------------");
+            System.out.println("------------------------------------------");
+            System.out.println("Printing Section Header Entry " + i + ":");         
+            System.out.println("------------------------------------------");
             printHeaderEntry(input.m_headerEntries.get(i));
         }
     }

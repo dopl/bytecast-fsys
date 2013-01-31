@@ -1,17 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.syr.bytecast.fsys.elf;
 
 import edu.syr.bytecast.fsys.BytecastFsysUtil;
-import java.util.*;
 import java.io.*;
+import java.util.*;
 
-/**
- *
- * @author adodds
- */
 public class ElfElfHeaderParser {
 
     private List<Byte> m_elfData;
@@ -36,7 +28,7 @@ public class ElfElfHeaderParser {
     ;
     
     public void parse() throws IOException {
-        int ident_length = 16;
+        int ident_length = m_elfElfHeader.e_ident.length;
 
         if (m_elfData == null || m_elfData.isEmpty() || m_elfData.size() < 16) {
             throw new IOException("ELF file header less than expected size");
@@ -47,67 +39,73 @@ public class ElfElfHeaderParser {
             //System.out.println("For i "+i);
             m_elfElfHeader.e_ident[i] = m_elfData.get(i);
         }
-        
+
         //Check to see if the file is an ELF file.
-        if(m_elfElfHeader.e_ident[0] != 0x7F ||
-           m_elfElfHeader.e_ident[1] != 'E'  ||
-           m_elfElfHeader.e_ident[2] != 'L'  ||
-           m_elfElfHeader.e_ident[3] != 'F')
-        {
+        if (m_elfElfHeader.e_ident[0] != 0x7F
+                || m_elfElfHeader.e_ident[1] != 'E'
+                || m_elfElfHeader.e_ident[2] != 'L'
+                || m_elfElfHeader.e_ident[3] != 'F') {
             throw new IOException("Input is not an ELF header");
         }
 
         int[] field_sizes;
-        if(m_elfElfHeader.e_ident[4] == m_elfElfHeader.ELFCLASS32)
-        {
+        if (m_elfElfHeader.e_ident[4] == m_elfElfHeader.ELFCLASS32) {
             field_sizes = m_elfElfHeader.ELF32_FIELD_SIZES;
-        }
-        else if(m_elfElfHeader.e_ident[4] == m_elfElfHeader.ELFCLASS64)
-        {
+        } else if (m_elfElfHeader.e_ident[4] == m_elfElfHeader.ELFCLASS64) {
             field_sizes = m_elfElfHeader.ELF64_FIELD_SIZES;
-        }
-        else
-        {
+        } else {
             throw new IOException("Unsupported ELF architecture. ELF32 or "
-                                    + "ELF64 supported only");
+                    + "ELF64 supported only");
         }
-    
+
         int bytes_consumed = ident_length;
-        for(int i = 0; i < field_sizes.length; i++)
-        {
-            long parseResult = BytecastFsysUtil.bytesToLong(bytes_consumed, 
-                                                            field_sizes[i], 
-                                                            m_elfData);
+        for (int i = 0; i < field_sizes.length; i++) {
+            long parseResult = BytecastFsysUtil.bytesToLong(bytes_consumed,
+                    field_sizes[i],
+                    m_elfData);
             bytes_consumed += field_sizes[i];
-            switch(i)
-            {
-                case 0:  
-                    m_elfElfHeader.e_type      = (short) parseResult; break;
-                case 1:  
-                    m_elfElfHeader.e_machine   = (short) parseResult; break;
-                case 2:  
-                    m_elfElfHeader.e_version   = (int)   parseResult; break;
-                case 3:  
-                    m_elfElfHeader.e_entry     = (long)  parseResult; break;
-                case 4:  
-                    m_elfElfHeader.e_phoff     = (long)  parseResult; break;
-                case 5:  
-                    m_elfElfHeader.e_shoff     = (long)  parseResult; break;
-                case 6:  
-                    m_elfElfHeader.e_flags     = (int)   parseResult; break;
-                case 7:  
-                    m_elfElfHeader.e_ehsize    = (short) parseResult; break;
-                case 8:  
-                    m_elfElfHeader.e_phentsize = (short) parseResult; break;
-                case 9:  
-                    m_elfElfHeader.e_phnum     = (short) parseResult; break;
-                case 10: 
-                    m_elfElfHeader.e_shentsize = (short) parseResult; break;
-                case 11: 
-                    m_elfElfHeader.e_shnum     = (short) parseResult; break;
-                case 12: 
-                    m_elfElfHeader.e_shstrndx  = (short) parseResult; break;
-                default: break;
+            switch (i) {
+                case 0:
+                    m_elfElfHeader.e_type = (short) parseResult;
+                    break;
+                case 1:
+                    m_elfElfHeader.e_machine = (short) parseResult;
+                    break;
+                case 2:
+                    m_elfElfHeader.e_version = (int) parseResult;
+                    break;
+                case 3:
+                    m_elfElfHeader.e_entry = (long) parseResult;
+                    break;
+                case 4:
+                    m_elfElfHeader.e_phoff = (long) parseResult;
+                    break;
+                case 5:
+                    m_elfElfHeader.e_shoff = (long) parseResult;
+                    break;
+                case 6:
+                    m_elfElfHeader.e_flags = (int) parseResult;
+                    break;
+                case 7:
+                    m_elfElfHeader.e_ehsize = (short) parseResult;
+                    break;
+                case 8:
+                    m_elfElfHeader.e_phentsize = (short) parseResult;
+                    break;
+                case 9:
+                    m_elfElfHeader.e_phnum = (short) parseResult;
+                    break;
+                case 10:
+                    m_elfElfHeader.e_shentsize = (short) parseResult;
+                    break;
+                case 11:
+                    m_elfElfHeader.e_shnum = (short) parseResult;
+                    break;
+                case 12:
+                    m_elfElfHeader.e_shstrndx = (short) parseResult;
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -130,48 +128,4 @@ public class ElfElfHeaderParser {
         System.out.printf("e_shnum: %d\n", m_elfElfHeader.e_shnum);
         System.out.printf("e_shstrndx: %d\n", m_elfElfHeader.e_shstrndx);
     }
-
-//Test header parser with generic data. Byte array with 1-64 values in it
-/*    public static void  main(String args[]){
-     ElfMainHeaderParser test = new ElfMainHeaderParser();
-     List<Byte> list = new ArrayList() ;
-        
-     byte x = 1;
-     while(x<=64){
-     list.add(x);
-     x++;
-     }
-        
-     test.setBinaryData(list);
-     test.ElfMainParser();
-        
-     }
-    @SuppressWarnings("empty-statement")
-    public static void main(String args[]) {
-        Elf64FileHeaderParser test = new Elf64FileHeaderParser();
-        List<Byte> list = new ArrayList();
-        FileReader rd = new FileReader();
-        rd.setFilepath("/home/shawn/code/bytecast-fsys/documents/testcase1_input_files/a.out");
-        if (rd.openFile()) {
-            try {
-                list = rd.getContents();
-            } catch (IOException status) {
-                System.out.println("Main: Error reading file");
-            }
-        } else {
-            System.out.println("Could not open file for reading");
-        }
-
-        test.setBinaryData(list);
-        try
-        {
-        test.parse();
-        }
-        catch(IOException e)
-        {
-            System.out.println(e.getMessage());
-        }
-        test.printHeader();
-
-    }*/
 }
