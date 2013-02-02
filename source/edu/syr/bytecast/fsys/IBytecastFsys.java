@@ -4,5 +4,5 @@ import java.io.IOException;
 public interface IBytecastFsys {
     public void setFilepath(String file_path);
     public String getFilepath();
-    ExeObj parse() throws IOException;
+    public ExeObj parse() throws IOException;
 }

@@ -1,17 +1,27 @@
-package edu.syr.bytecast.fsys;
+package edu.syr.bytecast.fsys.elf;
 
-public class ELFSectionHeaderEntryStruct {
-    public int     sh_name;
-    public int     sh_type;
-    public int     sh_link;
-    public int     sh_info;
-    public long    sh_flags;
-    public long    sh_addr;
-    public long    sh_offset;
-    public long    sh_size;
-    public long    sh_addralign;
-    public long    sh_entsize;
-    
+public class ElfSectionHeaderEntryStruct {
+
+    //--------------------------------------------------------------------------
+    // Fields 
+    //--------------------------------------------------------------------------
+    public int     sh_name;         /* Section name */
+    public int     sh_type;         /* Section type */
+    public int     sh_link;         /* Link to other section */
+    public int     sh_info;         /* Miscellaneous information */
+    public long    sh_flags;        /* Section attributes */
+    public long    sh_addr;         /* Virtual address in memory */
+    public long    sh_offset;       /* Offset in file */
+    public long    sh_size;         /* Size of section */
+    public long    sh_addralign;    /* Address alignment boundary */
+    public long    sh_entsize;      /* Size of entries, if section has table */
+ 
+            
+    //These are the sizes, in bytes, of each field (in order)
+    public static final int[] ELF32_FIELD_SIZES = {4, 4, 4, 4, 4, 4, 4, 4, 4, 4};
+    public static final int[] ELF64_FIELD_SIZES = {4, 4, 8, 8, 8, 8, 4, 4, 8, 8};
+    public static final short ELF32_ENTRY_SIZE = 40;
+    public static final short ELF64_ENTRY_SIZE = 64;
     //--------------------------------------------------------------------------
     // Section Type (sh_type) Enumurations
     //--------------------------------------------------------------------------
