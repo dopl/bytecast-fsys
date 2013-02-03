@@ -142,6 +142,23 @@ public class ElfProgramHeaderParser {
         return ret;
     }
     
+    // Search for the dynamic program header
+    public ElfProgramHeaderEntryStruct getDynamicTable(ElfProgramHeaderStruct input) 
+    {
+        ElfProgramHeaderEntryStruct ret;
+        for(int i = 0; i < input.m_headerEntries.size(); i++)
+        {
+            //Program header with type 2 or PT_DYNAMIC 
+            if(input.m_headerEntries.get(i).p_type == ElfProgramHeaderEntryStruct.PT_DYNAMIC)
+            {
+                ret = input.m_headerEntries.get(i);
+                return ret;  
+            }
+        }
+        // If no dynamic program header exists return null.
+        return null;   
+    }
+    
     public void printHeader(ElfProgramHeaderStruct input)
     {
         for(int i = 0; i < input.m_headerEntries.size(); i++)

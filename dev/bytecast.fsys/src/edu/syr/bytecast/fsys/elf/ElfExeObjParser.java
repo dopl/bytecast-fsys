@@ -32,6 +32,7 @@ public class ElfExeObjParser implements IBytecastFsys {
             file_header_parser.parse();
             file_header_parser.printHeader();
             ElfElfHeaderStruct fheader = file_header_parser.getElfMainHeader();
+            
             //Parse the program header
             long ph_offset     = fheader.e_phoff;
             int ph_read_amount = fheader.e_phentsize*fheader.e_phnum;
@@ -41,6 +42,21 @@ public class ElfExeObjParser implements IBytecastFsys {
             ElfProgramHeaderParser phparser = new ElfProgramHeaderParser(fheader.e_ident[4]);
             ElfProgramHeaderStruct phstruct = phparser.parse(bin_elf_prog_header);
             phparser.printHeader(phstruct);
+            
+            //Pull out the Dynamic table if there is one.
+            ElfProgramHeaderEntryStruct dynamicTableEntry = phparser.getDynamicTable(phstruct);
+            List<Byte> string_table;
+            if(dynamicTableEntry != null)
+            {
+                //pull out the dynamic table that will show where the string table is.
+                List<Byte> dynamic_table;
+                //check if cast to int is suitable.
+                dynamic_table = file_reader.getContents(dynamicTableEntry.p_offset, (int)dynamicTableEntry.p_memsz); 
+                ElfDynamicTableParser pdtable = new ElfDynamicTableParser(fheader.e_ident[4]);
+                ElfDynamicTableStruct dynamicTableStruct = pdtable.parse(dynamic_table);
+                //create the string table.
+                string_table = file_reader.getContents(pdtable.getStringTableAddr(), (int)pdtable.getStringTableLen()); 
+            }
             
             //Parse the section headers.
             long sh_offset    = fheader.e_shoff;
@@ -63,7 +79,7 @@ public class ElfExeObjParser implements IBytecastFsys {
         ElfExeObjParser elf_parser = new ElfExeObjParser();
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
-        elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/a.out");
+        elf_parser.setFilepath("/home/adodds/code/bytecast/bytecast-fsys/documents/testcase1_input_files/a.out");
         try {
             elf_parser.parse();
         } catch (FileNotFoundException e) {
