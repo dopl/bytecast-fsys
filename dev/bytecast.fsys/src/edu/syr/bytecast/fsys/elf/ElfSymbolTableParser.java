@@ -40,7 +40,7 @@ public class ElfSymbolTableParser {
                     case 2: ret.st_size  = (long)  parseResult; break;
                     case 3: ret.st_info  = (char)  parseResult; break;
                     case 4: ret.st_other = (char)  parseResult; break;
-                    case 5: ret.st_shndx = (short) parseResult; break;
+                    case 5: ret.st_shndx = (int)   parseResult; break;
                     default: break;
                 }      
             }
@@ -50,7 +50,7 @@ public class ElfSymbolTableParser {
                     case 0: ret.st_name  = (int)   parseResult; break;
                     case 1: ret.st_info  = (char)  parseResult; break;
                     case 2: ret.st_other = (char)  parseResult; break;
-                    case 3: ret.st_shndx = (short) parseResult; break;
+                    case 3: ret.st_shndx = (int)   parseResult; break;
                     case 4: ret.st_value = (long)  parseResult; break;
                     case 5: ret.st_size  = (long)  parseResult; break;
                     default: break;
