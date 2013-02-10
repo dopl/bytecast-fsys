@@ -24,7 +24,7 @@ public class BytecastFsysUtil {
         return ret;
     }
 
-    String parseStringFromBytes(List<Byte> input, int index) {
+    public static String parseStringFromBytes(List<Byte> input, int index) {
 
         String ret = "";
         int curr_pos = index;

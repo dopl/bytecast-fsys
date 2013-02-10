@@ -6,6 +6,10 @@ import java.util.*;
 
 public class ElfExeObjParser implements IBytecastFsys {
 
+    public ElfExeObjParser()
+    {
+        m_preferSections = false;
+    }
     @Override
     public void setFilepath(String file_path) {
         m_filePath = file_path;
@@ -16,65 +20,138 @@ public class ElfExeObjParser implements IBytecastFsys {
         return m_filePath;
     }
 
+    private boolean wantSections(int num_sections, int num_segments) throws IOException
+    {
+        boolean ret = false;
+        //return true if we prefer sections and we have them
+        if(num_sections > 0 && m_preferSections)
+            ret = true;
+        //or if we have no segments
+        if(num_sections > 0 && num_segments == 0)
+            ret = true;
+        
+        if(num_sections <= 0 && num_segments <= 0)
+            throw new IOException("Elf file contains no executable code"
+                    + "(section header and segment header sizes are zero).");
+        
+        return ret;
+    }
+    
     @Override
     public ExeObj parse() throws IOException {
-
-        BytecastFileReader file_reader = new BytecastFileReader();
-        file_reader.setFilepath(m_filePath);
-        if (file_reader.openFile()) {
-            List<Byte> bin_elf_file_header;
-            bin_elf_file_header = file_reader.getContents(0, 64);
+        ElfFileParser elf_file_parser = new ElfFileParser();
+        elf_file_parser.setFilePath(m_filePath);
+        ExeObj ret = new ExeObj();
+        
+        if(elf_file_parser.attach())
+        {
+            ElfElfHeaderStruct elf_header = elf_file_parser.getElfHeader();
             
-            //Parse the file header.
-            ElfElfHeaderParser file_header_parser;
-            file_header_parser = new ElfElfHeaderParser();
-            file_header_parser.setBinaryData(bin_elf_file_header);
-            file_header_parser.parse();
-            file_header_parser.printHeader();
-            ElfElfHeaderStruct fheader = file_header_parser.getElfMainHeader();
-            
-            //Parse the program header
-            long ph_offset     = fheader.e_phoff;
-            int ph_read_amount = fheader.e_phentsize*fheader.e_phnum;
-            
-            List<Byte> bin_elf_prog_header;
-            bin_elf_prog_header = file_reader.getContents(ph_offset, ph_read_amount);
-            ElfProgramHeaderParser phparser = new ElfProgramHeaderParser(fheader.e_ident[4]);
-            ElfProgramHeaderStruct phstruct = phparser.parse(bin_elf_prog_header);
-            phparser.printHeader(phstruct);
-            
-            //Pull out the Dynamic table if there is one.
-            ElfProgramHeaderEntryStruct dynamicTableEntry = phparser.getDynamicTable(phstruct);
-            List<Byte> string_table;
-            if(dynamicTableEntry != null)
+            if(wantSections(elf_header.e_shnum, elf_header.e_phnum))
             {
-                //pull out the dynamic table that will show where the string table is.
-                List<Byte> dynamic_table;
-                //check if cast to int is suitable.
-                dynamic_table = file_reader.getContents(dynamicTableEntry.p_offset, (int)dynamicTableEntry.p_memsz); 
-                ElfDynamicTableParser pdtable = new ElfDynamicTableParser(fheader.e_ident[4]);
-                ElfDynamicTableStruct dynamicTableStruct = pdtable.parse(dynamic_table);
-                //create the string table.
-                string_table = file_reader.getContents(pdtable.getStringTableAddr(), (int)pdtable.getStringTableLen()); 
+                
+                //Get the sections
+                ElfSectionHeaderStruct sect_header = elf_file_parser.getSectionHeader();
+                List<List<Byte>> sections = elf_file_parser.getSections();
+                
+                //Get the segments
+                ret.setSegments(generateSegments(sect_header,sections));
             }
-            
-            //Parse the section headers.
-            long sh_offset    = fheader.e_shoff;
-            int read_amount   = fheader.e_shentsize * fheader.e_shnum;
-            
-            List<Byte> bin_elf_sec_header;
-            bin_elf_sec_header = file_reader.getContents(sh_offset, read_amount);
-            ElfSectionHeaderParser shparser = new ElfSectionHeaderParser(fheader.e_ident[4]);
-            ElfSectionHeaderStruct shstruct = shparser.parseHeader(bin_elf_sec_header);
-            shparser.printHeader(shstruct);
+            else
+            {
 
-        } else {
-            throw new IOException("Error opening file.");
+            }
         }
-
+        else
+        {
+            throw new FileNotFoundException(m_filePath + " could not be opened.");
+        }
+       
         return new ExeObj();
     }
 
+    private boolean isExecutableSection(int type)
+    {
+        boolean ret = false;
+        if(type == ElfSectionHeaderEntryStruct.SHT_PROGBITS)
+            ret = true;
+        
+        return ret;
+    }
+    
+    private String getLabel(List<Byte> string_table, int string_id, int sh_index)
+    {
+        
+        String ret = m_filePath + "_" + 
+                     sh_index;
+        
+        if(string_id != -1 && string_table != null)
+            ret += "_" + 
+                   BytecastFsysUtil.parseStringFromBytes(string_table, string_id);
+        
+        return ret;
+            
+    }
+    private List<ExeObjSegment> generateSegments(ElfSectionHeaderStruct sect_header,
+                                                 List<List<Byte>> sections)
+    {
+        List<ExeObjSegment> ret = new ArrayList<ExeObjSegment>(); 
+        
+        List<Byte> string_table = null;
+        
+        //First find the string table (needed for section names)
+        for(int i = 0; i < sect_header.m_headerEntries.size(); i++)
+        {
+            ElfSectionHeaderEntryStruct entry = sect_header.m_headerEntries.get(i);
+            if(entry.sh_type == entry.SHT_STRTAB)
+            {
+                string_table = sections.get(i);
+            }
+        }       
+        
+        //Now find executable sections.
+        for(int i = 0; i < sect_header.m_headerEntries.size(); i++)
+        {
+            ElfSectionHeaderEntryStruct entry = sect_header.m_headerEntries.get(i);
+            if(isExecutableSection(entry.sh_type))
+            {
+                ExeObjSegment exe_seg = new ExeObjSegment();
+                exe_seg.setLabel(getLabel(string_table, entry.sh_info, i));
+                exe_seg.setBytes(sections.get(i));
+                exe_seg.setStartAddress(entry.sh_addr);
+                ret.add(exe_seg);
+            }
+        }
+        return ret;
+    }
+    
+    private List<ExeObjSegment> generateSegments(ElfFileParser elf_file_parser)
+    {
+        List<ExeObjSegment> ret = new ArrayList<ExeObjSegment>();
+        return ret;
+    }
+    
+    private List<ExeObjDependency> generateDependencies(ElfSectionHeaderStruct sect_header,
+                                                     List<List<Byte>> sections,
+                                                     char arch)
+    {
+        List<ExeObjDependency> ret = new ArrayList<ExeObjDependency>(); 
+        
+        //First find the dynamic table
+        for(int i = 0; i < sect_header.m_headerEntries.size(); i++)
+        {
+            ElfSectionHeaderEntryStruct entry = sect_header.m_headerEntries.get(i);
+            if(entry.sh_type == entry.SHT_DYNAMIC)
+            {
+                //
+                // USE ELF DEPENDENCY RESOLVER CLASS HERE!
+                //
+            }
+        }       
+
+        return ret;
+    }
+    
     public static void main(String args[]) {
         ElfExeObjParser elf_parser = new ElfExeObjParser();
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
@@ -89,4 +166,5 @@ public class ElfExeObjParser implements IBytecastFsys {
         }
     }
     private String m_filePath;
+    private boolean m_preferSections;
 }
