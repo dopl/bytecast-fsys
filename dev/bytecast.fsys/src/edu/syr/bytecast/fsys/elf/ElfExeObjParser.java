@@ -45,7 +45,7 @@ public class ElfExeObjParser implements IBytecastFsys {
             
             //Pull out the Dynamic table if there is one.
             ElfProgramHeaderEntryStruct dynamicTableEntry = phparser.getDynamicTable(phstruct);
-            List<Byte> string_table;
+            List<Byte> string_Table = new ArrayList();
             if(dynamicTableEntry != null)
             {
                 //pull out the dynamic table that will show where the string table is.
@@ -55,7 +55,14 @@ public class ElfExeObjParser implements IBytecastFsys {
                 ElfDynamicTableParser pdtable = new ElfDynamicTableParser(fheader.e_ident[4]);
                 ElfDynamicTableStruct dynamicTableStruct = pdtable.parse(dynamic_table);
                 //create the string table.
-                string_table = file_reader.getContents(pdtable.getStringTableAddr(), (int)pdtable.getStringTableLen()); 
+         //     string_Table = file_reader.getContents(pdtable.getStringTableAddr(), (int)pdtable.getStringTableLen()); 
+                string_Table = file_reader.getContents(0x200, 50); 
+            }
+            for(int i = 0; i < string_Table.size();i++){
+                System.out.printf("%c", string_Table.get(i));
+                if(string_Table.get(i) == 0){
+                    System.out.printf("\n");
+                }
             }
             
             //Parse the section headers.

@@ -52,13 +52,10 @@ public class ElfDynamicTableParser {
     private ElfDynamicTableEntryStruct parseEntry(List<Byte> data, int index) {
   
         ElfDynamicTableEntryStruct ret = new ElfDynamicTableEntryStruct();
-        m_stringTableAddr = -1;
-        m_stringTableLen = -1;
         
         int bytes_consumed  = 0;
         int current_field   = 0;
 
-     
         //Parse all fields until the entry had been consumed.
         while(bytes_consumed < m_entrySize)
         {
@@ -69,6 +66,7 @@ public class ElfDynamicTableParser {
             long parseResult = BytecastFsysUtil.bytesToLong(byte_index, 
                                                  m_fieldLengths[current_field], 
                                                         data);
+            //System.out.printf("ParseResult: %016x\n", parseResult);
             //Increment the number of bytes consumed by the field size
             bytes_consumed += m_fieldLengths[current_field];
             
@@ -78,27 +76,20 @@ public class ElfDynamicTableParser {
                     break;
                 case 1:                 
                     ret.d_val  = (int) parseResult;
-                    break;
-                case 2:
                     ret.d_ptr = (long) parseResult;
+                    //set up variables for where the symbol table is in memory.
+                    //these values come from two entries in the dynamic table.
+                    if(ret.d_tag == ElfDynamicTableEntryStruct.DT_STRTAB){
+                        m_stringTableAddr = ret.d_ptr;
+                    }
+                    if(ret.d_tag == ElfDynamicTableEntryStruct.DT_STRSZ){
+                        m_stringTableLen = ret.d_val;
+                    }
                     break;
             }
             
             //go to the next field.
             current_field++;
-            if(current_field%3 == 0)
-            {
-                //set up variables for where the symbol table is in memory.
-                //these values come from two entries in the dynamic table.
-                if(ret.d_tag == ElfDynamicTableEntryStruct.DT_STRTAB){
-                    m_stringTableAddr = ret.d_ptr;
-                }
-                
-                if(ret.d_tag == ElfDynamicTableEntryStruct.DT_STRSZ){
-                    m_stringTableLen = ret.d_val;
-                }
-            }
-            
         }
         return ret;
         

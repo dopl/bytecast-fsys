@@ -17,10 +17,10 @@ public class ElfDynamicTableEntryStruct {
     public long      d_ptr;        /* Address of entry type */
             
     //These are the sizes, in bytes, of each field (in order)
-    public static final int[] ELF32_FIELD_SIZES = {4,4,4};
-    public static final int[] ELF64_FIELD_SIZES = {8,8,8};
-    public static final short ELF32_ENTRY_SIZE = 12;
-    public static final short ELF64_ENTRY_SIZE = 24;
+    public static final int[] ELF32_FIELD_SIZES = {4,4};
+    public static final int[] ELF64_FIELD_SIZES = {8,8};
+    public static final short ELF32_ENTRY_SIZE = 8;
+    public static final short ELF64_ENTRY_SIZE = 16;
     
     //--------------------------------------------------------------------------
     // Dynamic Type (d_tag) Enumurations
