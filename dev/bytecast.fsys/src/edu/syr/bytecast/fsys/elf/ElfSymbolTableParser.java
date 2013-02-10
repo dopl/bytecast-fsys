@@ -16,7 +16,7 @@ public class ElfSymbolTableParser {
             m_fieldLengths  = ElfProgramHeaderEntryStruct.ELF64_FIELD_SIZES;
         } else {
             throw new IOException("Unsupported ELF architecture. ELF32 or "
-                                    + "ELF64 supported only");
+                                    + "ELF64 supported only"); 
         }       
     }
 

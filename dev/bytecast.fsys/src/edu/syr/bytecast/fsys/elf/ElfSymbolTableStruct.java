@@ -9,7 +9,7 @@ public class ElfSymbolTableStruct {
     char    st_info;    /* Type and Binding Attributes */
     char    st_other;   /* Reserved */
     short   st_shndx;   /* Section Table Index */
-    long    st_value;   /* Symbol Value */
+    long    st_value;   /* Symbol Value */ 
     long    st_size;    /* Size of object (e.g., common) */
     
     //These are the sizes, in bytes, of each field (in order)
