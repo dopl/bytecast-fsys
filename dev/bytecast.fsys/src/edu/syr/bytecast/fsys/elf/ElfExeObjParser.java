@@ -82,18 +82,18 @@ public class ElfExeObjParser implements IBytecastFsys {
         return new ExeObj();
     }
 
-    public static void main(String args[]) {
-        ElfExeObjParser elf_parser = new ElfExeObjParser();
-        //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
-        //elf_parser.setFilepath("/lib32/libc.so.6");
-        elf_parser.setFilepath("/home/adodds/code/bytecast/bytecast-fsys/documents/testcase1_input_files/a.out");
-        try {
-            elf_parser.parse();
-        } catch (FileNotFoundException e) {
-            System.out.println("Could not parse file.");
-        } catch (IOException e) {
-            System.out.println("Error parsing file.");
-        }
-    }
+//    public static void main(String args[]) {
+//        ElfExeObjParser elf_parser = new ElfExeObjParser();
+//        //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
+//        //elf_parser.setFilepath("/lib32/libc.so.6");
+//        elf_parser.setFilepath("/home/adodds/code/bytecast/bytecast-fsys/documents/testcase1_input_files/a.out");
+//        try {
+//            elf_parser.parse();
+//        } catch (FileNotFoundException e) {
+//            System.out.println("Could not parse file.");
+//        } catch (IOException e) {
+//            System.out.println("Error parsing file.");
+//        }
+//    }
     private String m_filePath;
 }

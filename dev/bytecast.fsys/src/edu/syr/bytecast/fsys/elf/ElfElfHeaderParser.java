@@ -87,22 +87,22 @@ public class ElfElfHeaderParser {
                     m_elfElfHeader.e_flags = (int) parseResult;
                     break;
                 case 7:
-                    m_elfElfHeader.e_ehsize = (short) parseResult;
+                    m_elfElfHeader.e_ehsize = (int) parseResult;
                     break;
                 case 8:
-                    m_elfElfHeader.e_phentsize = (short) parseResult;
+                    m_elfElfHeader.e_phentsize = (int) parseResult;
                     break;
                 case 9:
-                    m_elfElfHeader.e_phnum = (short) parseResult;
+                    m_elfElfHeader.e_phnum = (int) parseResult;
                     break;
                 case 10:
-                    m_elfElfHeader.e_shentsize = (short) parseResult;
+                    m_elfElfHeader.e_shentsize = (int) parseResult;
                     break;
                 case 11:
-                    m_elfElfHeader.e_shnum = (short) parseResult;
+                    m_elfElfHeader.e_shnum = (int) parseResult;
                     break;
                 case 12:
-                    m_elfElfHeader.e_shstrndx = (short) parseResult;
+                    m_elfElfHeader.e_shstrndx = (int) parseResult;
                     break;
                 default:
                     break;

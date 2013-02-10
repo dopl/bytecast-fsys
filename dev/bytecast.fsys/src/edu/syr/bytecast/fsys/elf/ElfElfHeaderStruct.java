@@ -14,12 +14,12 @@ public class ElfElfHeaderStruct {
     public long        e_phoff;     /* Program header offset */
     public long        e_shoff;     /* Section he ader offset */
     public int         e_flags;     /* Processor-specific flags */
-    public short       e_ehsize;    /* ELF header size */
-    public short       e_phentsize; /* Size of program header entry */
-    public short       e_phnum;     /* Number of program header entries */
-    public short       e_shentsize; /* Size of section header entry */
-    public short       e_shnum;     /* Number of section header entries */
-    public short       e_shstrndx;  /* Section name string table index */
+    public int         e_ehsize;    /* ELF header size */
+    public int         e_phentsize; /* Size of program header entry */
+    public int         e_phnum;     /* Number of program header entries */
+    public int         e_shentsize; /* Size of section header entry */
+    public int         e_shnum;     /* Number of section header entries */
+    public int         e_shstrndx;  /* Section name string table index */
     
     
     public static final int[] ELF32_FIELD_SIZES = {2,2,4,4,4,4,4,2,2,2,2,2,2};
