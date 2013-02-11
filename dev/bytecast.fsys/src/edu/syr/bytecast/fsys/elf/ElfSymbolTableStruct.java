@@ -8,7 +8,7 @@ public class ElfSymbolTableStruct {
     int     st_name;    /* Symbol Name */
     char    st_info;    /* Type and Binding Attributes */
     char    st_other;   /* Reserved */
-    short   st_shndx;   /* Section Table Index */
+    int     st_shndx;   /* Section Table Index */
     long    st_value;   /* Symbol Value */ 
     long    st_size;    /* Size of object (e.g., common) */
     

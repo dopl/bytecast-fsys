@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package edu.syr.bytecast.fsys.elf;
 
 import edu.syr.bytecast.fsys.*;
@@ -9,10 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
-/**
- *
- * @author adodds
- */
 public class ElfFileParser {
 
     private ElfElfHeaderStruct m_elfHeader;
