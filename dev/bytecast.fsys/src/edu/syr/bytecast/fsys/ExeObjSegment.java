@@ -26,7 +26,7 @@ public class ExeObjSegment {
     
     public void setBytes(List<Byte> bytes)
     {
-        bytes = m_bytes;
+        m_bytes = bytes;
     }
     
     private long m_startAddress;

@@ -65,7 +65,6 @@ public class ElfFileParser {
         //parse the elf header.
         file_header_parser.setBinaryData(bin_elf_file_header);
         file_header_parser.parse();
-        file_header_parser.printHeader();
         m_elfHeader = file_header_parser.getElfMainHeader();
         
         return m_elfHeader;
@@ -82,7 +81,6 @@ public class ElfFileParser {
         //use e_ident field to find out if its 64 or 32 bit elf file. 
         ElfProgramHeaderParser phparser = new ElfProgramHeaderParser(m_elfHeader.e_ident[4]);
         ElfProgramHeaderStruct phstruct = phparser.parse(bin_elf_prog_header);
-        phparser.printHeader(phstruct);
         
         m_segments = new ArrayList();
         //pull out the segment data defined by the program headers.
@@ -93,7 +91,7 @@ public class ElfFileParser {
             //segment size in file
             long segment_size = phstruct.m_headerEntries.get(i).p_filesz;
             
-            //there is no segement data for this segment header so add null.
+            //there is no segment data for this segment header so add null.
             if(segment_size == 0)
             {
                 m_segments.add(null);
@@ -119,7 +117,6 @@ public class ElfFileParser {
         ElfSectionHeaderParser shparser = new ElfSectionHeaderParser(m_elfHeader.e_ident[4]);
         //parse the section headers.
         ElfSectionHeaderStruct shstruct = shparser.parseHeader(bin_elf_sec_header);
-        shparser.printHeader(shstruct);
         
         m_sections = new ArrayList();
         //pull out the section data defined by the program headers.
