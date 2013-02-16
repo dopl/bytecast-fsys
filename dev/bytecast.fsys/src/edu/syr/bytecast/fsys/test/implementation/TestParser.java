@@ -41,6 +41,7 @@ public class TestParser {
             
             System.out.println("Message");
             System.out.println(result.getMessage());
+            
         } catch (Exception ex) {
             Logger.getLogger(TestParser.class.getName()).log(Level.SEVERE, null, ex);
         }
