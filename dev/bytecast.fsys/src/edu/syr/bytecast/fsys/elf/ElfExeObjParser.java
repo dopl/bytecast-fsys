@@ -69,7 +69,7 @@ public class ElfExeObjParser implements IBytecastFsys {
                 List<List<Byte>> sections = elf_file_parser.getSections();
                 
                 //Generate the ExeObj segments from the sections
-                ret.setSegments(generateSegments(sect_header,sections,elf_header.e_shstrndx));
+                ret.setSegments(generateSegments(sect_header,elf_file_parser,elf_header.e_shstrndx));
             }
             else
             {
@@ -82,7 +82,7 @@ public class ElfExeObjParser implements IBytecastFsys {
                 List<List<Byte>> segments = elf_file_parser.getSegments();
                 
                 //Generate the ExeObj segments from the ELF segments
-                ret.setSegments(generateSegments(prog_header,segments));
+                ret.setSegments(generateSegments(prog_header,elf_file_parser));
 
             }
             
@@ -136,12 +136,12 @@ public class ElfExeObjParser implements IBytecastFsys {
     
     //Generates Segments from Section Headers.
     private List<ExeObjSegment> generateSegments(ElfSectionHeaderStruct sect_header,
-                                                 List<List<Byte>> sections,
-                                                 int sh_strtab_idx)
+                                                 ElfFileParser file_parser,
+                                                 int sh_strtab_idx) throws IOException
     {
         List<ExeObjSegment> ret = new ArrayList<ExeObjSegment>(); 
         
-        List<Byte> string_table = sections.get(sh_strtab_idx);
+        List<Byte> string_table = file_parser.getSection(sh_strtab_idx);
         
         
         //Now find executable sections.
@@ -152,7 +152,7 @@ public class ElfExeObjParser implements IBytecastFsys {
             {
                 ExeObjSegment exe_seg = new ExeObjSegment();
                 exe_seg.setLabel(getLabel(string_table, entry.sh_name, i));
-                exe_seg.setBytes(sections.get(i));
+                exe_seg.setBytes(file_parser.getSection(i));
                 exe_seg.setStartAddress(entry.sh_addr);
                 ret.add(exe_seg);
             }
@@ -162,7 +162,7 @@ public class ElfExeObjParser implements IBytecastFsys {
     
     //Generate the segments from the program header and segments.
     private List<ExeObjSegment> generateSegments(ElfProgramHeaderStruct prog_header,
-                                                 List<List<Byte>> segments)
+                                                 ElfFileParser file_parser) throws IOException
     {
         List<ExeObjSegment> ret = new ArrayList<ExeObjSegment>();
         
@@ -173,7 +173,7 @@ public class ElfExeObjParser implements IBytecastFsys {
             {
                 ExeObjSegment exe_seg = new ExeObjSegment();
                 exe_seg.setLabel(getLabel(null, -1, i));
-                exe_seg.setBytes(segments.get(i));
+                exe_seg.setBytes(file_parser.getSegment(i));
                 exe_seg.setStartAddress(entry.p_vaddr);
                 ret.add(exe_seg);               
             }
