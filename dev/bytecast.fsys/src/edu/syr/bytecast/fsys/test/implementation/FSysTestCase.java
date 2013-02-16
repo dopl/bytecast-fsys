@@ -67,7 +67,7 @@ public class FSysTestCase implements ITestCase {
             
             IBytecastFsys testObject = new ElfExeObjParser();
             testObject.setFilepath(m_inputFilePath);
-            List<ExeObjDependency> lists =   testObject.parse().getDependencies();
+            List<ExeObjDependency> lists = testObject.parse().getDependencies();
             for(ExeObjDependency dep : lists)
             {
                 if(!m_inputDependencies.contains(dep.getDependencyName()))
@@ -85,8 +85,8 @@ public class FSysTestCase implements ITestCase {
             }
             
           System.setOut(old_ps);
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (Exception ex) {
+          ex.printStackTrace();
         }
         return m_result;
     }

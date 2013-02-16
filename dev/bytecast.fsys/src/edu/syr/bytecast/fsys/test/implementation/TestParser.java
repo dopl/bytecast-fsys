@@ -29,7 +29,7 @@ public class TestParser {
             {
                 System.out.println(dep.getDependencyName());
             }
-        } catch (IOException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(TestParser.class.getName()).log(Level.SEVERE, null, ex);
         }
    }
