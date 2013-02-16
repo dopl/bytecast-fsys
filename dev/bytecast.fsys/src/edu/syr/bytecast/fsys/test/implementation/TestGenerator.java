@@ -35,7 +35,8 @@ public class TestGenerator {
         for(ITestCase testCase : m_testCases)
         {
             System.out.println("Test Name : " + testCase.getTestName());
-            if(testCase.getResult().getPassed())
+            TestResult result = testCase.getResult();
+            if(result.getPassed())
             {
                 System.out.println("Test Passed!!"); 
                 System.out.println("Test Message : ");
@@ -46,7 +47,7 @@ public class TestGenerator {
                 System.out.println("Test Failed!");
                 System.out.println("Error Messsage : ");
             }
-           System.out.println(testCase.getResult().getMessage()); 
+           System.out.println(result.getMessage()); 
         }
     }    
 }
