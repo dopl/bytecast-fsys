@@ -37,13 +37,16 @@ public class TestGenerator {
             System.out.println("Test Name : " + testCase.getTestName());
             if(testCase.getResult().getPassed())
             {
-                System.out.println("Test Passed!!");                
+                System.out.println("Test Passed!!"); 
+                System.out.println("Test Message : ");
+                
             }
             else
             {
                 System.out.println("Test Failed!");
-                System.out.println("Error Messsage : " + testCase.getResult().getMessage());
+                System.out.println("Error Messsage : ");
             }
+           System.out.println(testCase.getResult().getMessage()); 
         }
     }    
 }

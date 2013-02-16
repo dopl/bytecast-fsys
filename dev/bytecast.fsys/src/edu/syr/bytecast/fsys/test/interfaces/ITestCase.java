@@ -13,4 +13,5 @@ import edu.syr.bytecast.fsys.test.implementation.TestResult;
 public interface ITestCase {
     TestResult getResult();
     String getTestName();
+    void setTestName(String testName);
 }

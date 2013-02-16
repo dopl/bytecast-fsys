@@ -21,6 +21,7 @@ public class TestParser {
    {
        Set<String> dependencies = new HashSet<String>(Arrays.asList(new String[]{"linux-vdso.so.1", "/lib/libc.so.6", "/lib64/ld-linux-x86-64.so.2"}));
        ITestCase ret = new FSysTestCase("test_input/a.out", dependencies);
+       ret.setTestName("First Test Case");
        return ret;
    }
    
@@ -29,18 +30,10 @@ public class TestParser {
         try {
             TestParser testParser = new TestParser();
             ITestCase testCase = testParser.getTestCase();
-            TestResult result = testCase.getResult();
-            if(result.getPassed())
-            {
-                System.out.println("Test Case Passed");
-            }
-            else
-            {
-                System.out.println("Test Case Failed");                
-            }
-            
-            System.out.println("Message");
-            System.out.println(result.getMessage());
+            TestGenerator testGenerator = new TestGenerator();
+            testGenerator.addTest(testCase);            
+            testGenerator.start();
+            testGenerator.printResults();
             
         } catch (Exception ex) {
             Logger.getLogger(TestParser.class.getName()).log(Level.SEVERE, null, ex);

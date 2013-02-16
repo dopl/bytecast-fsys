@@ -9,7 +9,6 @@ import edu.syr.bytecast.fsys.IBytecastFsys;
 import edu.syr.bytecast.fsys.elf.ElfExeObjParser;
 import edu.syr.bytecast.fsys.test.interfaces.ITestCase;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
@@ -44,7 +43,7 @@ public class FSysTestCase implements ITestCase {
     
     public FSysTestCase(String inputFilePath, Set<String> dependencies)
     {
-        m_testName = "DefaultName";
+        m_testName = "Default Name";
         m_inputFilePath = inputFilePath;
         this.m_inputDependencies = dependencies;        
         m_result = new TestResult();
@@ -104,6 +103,7 @@ public class FSysTestCase implements ITestCase {
         return m_testName;
     }
     
+    @Override
     public void setTestName(String name)
     {
         this.m_testName = name;
