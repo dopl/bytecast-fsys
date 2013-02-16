@@ -148,6 +148,11 @@ public class ElfFileParser {
         return ret;
     }
 
+    public List<Byte> getBytes(long offset, int size) throws IOException
+    {
+        return m_bytecastFileReader.getContents(offset,size);
+    }
+    
     public static void main(String args[]) {
         ElfFileParser elf_parser = new ElfFileParser();
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
