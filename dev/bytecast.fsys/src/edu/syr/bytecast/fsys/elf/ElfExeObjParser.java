@@ -76,6 +76,7 @@ public class ElfExeObjParser implements IBytecastFsys {
                 
                 //Generate the ExeObj segments from the sections
                 ret.setSegments(generateSegments(sect_header,elf_file_parser,elf_header.e_shstrndx));
+                
             }
             else
             {
@@ -233,22 +234,45 @@ public class ElfExeObjParser implements IBytecastFsys {
             ElfDynamicTableEntryStruct entry = dt.m_headerEntries.get(i);
             if(entry.d_tag == entry.DT_NEEDED)
             {
+                //todo: may need to add interp in section headers to get all dependencies
                 ExeObjDependency dep = new ExeObjDependency();
                 String depName = BytecastFsysUtil.parseStringFromBytes(string_table, (int)entry.d_ptr);
                 dep.setDependencyName(depName);
                 ret.add(dep);
             }           
         }
-        
+        resloveDependeciesPath(ret,null);
         return ret;
     }
-    
+    public List<ExeObjDependency> resloveDependeciesPath(List<ExeObjDependency> dependencies,String searchPath){
+        List<ExeObjDependency> ret = dependencies;
+        if(searchPath == null)
+        {
+            searchPath = "/home";
+        }
+        
+        for(int i = 0; i < ret.size();i++)
+        {
+            String path = BytecastFsysUtil.searchForFile(searchPath, ret.get(i).getDependencyName());
+            if(path != null)
+            {
+                ret.get(i).setDependencyPath(path);
+                ret.get(i).setDependencyType(ExeObjDependency.ExeObjDependencyType.FILE);
+            }
+            else
+            {
+                 ret.get(i).setDependencyType(ExeObjDependency.ExeObjDependencyType.KERNEL);
+            }
+        }
+        return ret;
+    }
     public static void main(String args[]) {
         ElfExeObjParser elf_parser = new ElfExeObjParser(false);
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
 
-        elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
+        //elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
+        elf_parser.setFilepath("../../documents/testcase1_input_files/a.out");
         try {
             ExeObj exeObj = elf_parser.parse();
             exeObj.printExeObj();

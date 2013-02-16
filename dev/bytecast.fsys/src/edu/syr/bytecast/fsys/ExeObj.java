@@ -56,7 +56,20 @@ public class ExeObj {
         {
             System.out.println("Name:  " + m_dependencies.get(i).getDependencyName());
             System.out.println("DependencyPath: " + m_dependencies.get(i).getDependencyPath());
-            System.out.printf("Type:  %016x\n", m_dependencies.get(i).getDependencyType());
+            if(m_dependencies.get(i).getDependencyType() == ExeObjDependency.ExeObjDependencyType.KERNEL)
+            {
+                String type = "KERNEL";
+                System.out.printf("Type:   " + type);
+            }
+            else if(m_dependencies.get(i).getDependencyType() == ExeObjDependency.ExeObjDependencyType.FILE)
+            {
+                String type = "FILE";
+                System.out.printf("Type:  " + type + "\n");
+            }
+            else
+            {
+                System.out.printf("Type:  %016x\n", m_dependencies.get(i).getDependencyType());
+            }
             System.out.printf("StartOffset:  %016x\n\n", m_dependencies.get(i).getStartOffset());
         }  
         
