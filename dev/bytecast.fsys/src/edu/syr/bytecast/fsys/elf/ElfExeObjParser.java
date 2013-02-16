@@ -9,7 +9,7 @@ public class ElfExeObjParser implements IBytecastFsys {
     //Constructor
     public ElfExeObjParser()
     {
-        m_preferSections = false;
+        m_preferSections = true;
     }
     
     //Sets the file path to parse
