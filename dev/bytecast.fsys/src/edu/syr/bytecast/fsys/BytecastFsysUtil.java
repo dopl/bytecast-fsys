@@ -1,5 +1,6 @@
 package edu.syr.bytecast.fsys;
 
+import java.io.*;
 import java.util.*;
 
 public class BytecastFsysUtil {
@@ -65,4 +66,65 @@ public class BytecastFsysUtil {
 //             System.out.println("Entry "+i+": " + tmp.get(i));
 //        
 //     }
+    public String searchForFile(String path, String name){
+        String ret = "No File Found";
+        File file_contents = new File(path);         
+        //see if the path is a directory. 
+        if(file_contents.isDirectory() == false)
+        {
+            return path;
+        }
+        
+        ret = bfsSearch(file_contents,name);
+        
+        return ret;
+    }
+    
+    private String appendPathName(String path, String name){
+        String ret = "";
+        ret = path + "/" + name;
+        return ret;
+    }
+    
+    private String bfsSearch(File filein, String name)
+    {
+        String ret = "";
+        
+        Queue<File> q = new LinkedList<File>();
+        
+        q.add(filein);
+        while(q.isEmpty() == false)
+        {
+            File dir_contents = q.remove();
+            String[] folder_contents = dir_contents.list();
+            
+            
+            
+            //search if the file is in the current directory.
+            for(int i = 0; i < folder_contents.length; i++)
+            {
+                if(folder_contents[i].equals(name))
+                {
+                    ret = appendPathName(dir_contents.getPath(),name);
+                    return ret;
+                }
+                
+                File add_file = new File(appendPathName(dir_contents.getPath(),folder_contents[i]));
+                if(add_file.isDirectory())
+                {
+                    q.add(add_file);
+                }
+            }
+        }
+        
+        return ret;
+    }
+    
+    public static void main(String args[]) {
+         BytecastFsysUtil test = new BytecastFsysUtil();
+         System.out.println(test.searchForFile("/home/adodds/code/", "a.out"));
+         
+          System.out.println("FsysUtil Main done");
+    }
+    
 }

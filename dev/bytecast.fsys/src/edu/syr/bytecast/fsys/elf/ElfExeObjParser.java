@@ -9,13 +9,15 @@ public class ElfExeObjParser implements IBytecastFsys {
     //Constructor
     public ElfExeObjParser()
     {
-        m_preferSections = true;
+        m_preferSections = false;
     }
     
+    //Constructor
     public ElfExeObjParser(boolean prefer_sections)
     {
         m_preferSections = prefer_sections;
     }
+    
     //Sets the file path to parse
     @Override
     public void setFilepath(String file_path) {
@@ -245,7 +247,8 @@ public class ElfExeObjParser implements IBytecastFsys {
         ElfExeObjParser elf_parser = new ElfExeObjParser(false);
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
-        elf_parser.setFilepath("/home/shawn/code/bytecast-fsys/documents/testcase1_input_files/a.out.static");
+
+        elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
         try {
             ExeObj exeObj = elf_parser.parse();
             exeObj.printExeObj();
