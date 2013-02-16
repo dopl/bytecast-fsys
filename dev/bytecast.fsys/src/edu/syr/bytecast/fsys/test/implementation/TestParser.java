@@ -4,12 +4,10 @@
  */
 package edu.syr.bytecast.fsys.test.implementation;
 
-import edu.syr.bytecast.fsys.ExeObj;
-import edu.syr.bytecast.fsys.ExeObjDependency;
-import edu.syr.bytecast.fsys.IBytecastFsys;
-import edu.syr.bytecast.fsys.elf.ElfExeObjParser;
-import java.io.IOException;
-import java.util.List;
+import edu.syr.bytecast.fsys.test.interfaces.ITestCase;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,18 +16,32 @@ import java.util.logging.Logger;
  * @author dhrumin
  */
 public class TestParser {
-    
+   
+   public ITestCase getTestCase()
+   {
+       Set<String> dependencies = new HashSet<String>(Arrays.asList(new String[]{"linux-vdso.so.1", "/lib/libc.so.6", "/lib64/ld-linux-x86-64.so.2"}));
+       ITestCase ret = new FSysTestCase("test_input/a.out", dependencies);
+       return ret;
+   }
+   
    public static void main(String[] args)
    {
         try {
-            IBytecastFsys testObject = new ElfExeObjParser();
-            testObject.setFilepath("test_input/a.out");
-            List<ExeObjDependency> lists =   testObject.parse().getDependencies();
-            for(ExeObjDependency dep : lists)
+            TestParser testParser = new TestParser();
+            ITestCase testCase = testParser.getTestCase();
+            TestResult result = testCase.getResult();
+            if(result.getPassed())
             {
-                System.out.println(dep.getDependencyName());
+                System.out.println("Test Case Passed");
             }
-        } catch (IOException ex) {
+            else
+            {
+                System.out.println("Test Case Failed");                
+            }
+            
+            System.out.println("Message");
+            System.out.println(result.getMessage());
+        } catch (Exception ex) {
             Logger.getLogger(TestParser.class.getName()).log(Level.SEVERE, null, ex);
         }
    }

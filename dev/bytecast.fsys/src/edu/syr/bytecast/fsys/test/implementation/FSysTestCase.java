@@ -68,11 +68,16 @@ public class FSysTestCase implements ITestCase {
             IBytecastFsys testObject = new ElfExeObjParser();
             testObject.setFilepath(m_inputFilePath);
             List<ExeObjDependency> lists =   testObject.parse().getDependencies();
+            if(lists != null && lists.isEmpty() && m_inputDependencies.size() > 0)
+            {
+                System.out.println("No Input Dependency Returned");
+                m_result.setPassed(false);
+            }
             for(ExeObjDependency dep : lists)
             {
                 if(!m_inputDependencies.contains(dep.getDependencyName()))
                 {
-                    System.out.println("Dependency " + dep + "Not Found");
+                    System.out.println("Dependency " + dep + " Not Found");
                     m_result.setPassed(false);
                 } else
                     m_inputDependencies.remove(dep.getDependencyName());
@@ -80,14 +85,15 @@ public class FSysTestCase implements ITestCase {
             
             for(String notCheckedDependencies : m_inputDependencies)
             {
-                System.out.println("Dependency " + notCheckedDependencies + "not returned ");
+                System.out.println("Dependency " + notCheckedDependencies + " not returned ");
                 m_result.setPassed(false);
             }
-            
+          m_result.appendMessage(baos.toString());
           System.setOut(old_ps);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        
         return m_result;
     }
 
