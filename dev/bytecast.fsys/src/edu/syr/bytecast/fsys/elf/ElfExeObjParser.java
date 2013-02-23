@@ -19,9 +19,7 @@
 package edu.syr.bytecast.fsys.elf;
 
 import edu.syr.bytecast.fsys.*;
-import edu.syr.bytecast.interfaces.fsys.ExeObj;
-import edu.syr.bytecast.interfaces.fsys.ExeObjSegment;
-import edu.syr.bytecast.interfaces.fsys.IBytecastFsys;
+import edu.syr.bytecast.interfaces.fsys.*;
 import java.io.*;
 import java.util.*;
 
@@ -276,7 +274,7 @@ public class ElfExeObjParser implements IBytecastFsys {
         elf_parser.setFilepath("../../documents/testcase1_input_files/a.out");
         try {
             ExeObj exeObj = elf_parser.parse();
-            exeObj.printExeObj();
+            ExeObjIOUtils.printExeObj(exeObj);
         } catch (FileNotFoundException e) {
             System.out.println("Could not parse file.");
         } catch (Exception e) {
