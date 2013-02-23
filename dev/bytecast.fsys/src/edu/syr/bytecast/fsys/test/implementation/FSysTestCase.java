@@ -1,24 +1,33 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * This file is part of Bytecast.
+ *
+ * Bytecast is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Bytecast is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Bytecast.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
+
 package edu.syr.bytecast.fsys.test.implementation;
 
-import edu.syr.bytecast.fsys.ExeObjDependency;
-import edu.syr.bytecast.fsys.IBytecastFsys;
+import edu.syr.bytecast.interfaces.fsys.ExeObjDependency;
+import edu.syr.bytecast.interfaces.fsys.IBytecastFsys;
 import edu.syr.bytecast.fsys.elf.ElfExeObjParser;
 import edu.syr.bytecast.fsys.test.interfaces.ITestCase;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- *
- * @author dhrumin
- */
 public class FSysTestCase implements ITestCase {
 
     private TestResult m_result;
@@ -44,7 +53,7 @@ public class FSysTestCase implements ITestCase {
     
     public FSysTestCase(String inputFilePath, Set<String> dependencies)
     {
-        m_testName = "DefaultName";
+        m_testName = "Default Name";
         m_inputFilePath = inputFilePath;
         this.m_inputDependencies = dependencies;        
         m_result = new TestResult();
@@ -67,12 +76,19 @@ public class FSysTestCase implements ITestCase {
             
             IBytecastFsys testObject = new ElfExeObjParser();
             testObject.setFilepath(m_inputFilePath);
-            List<ExeObjDependency> lists = testObject.parse().getDependencies();
+
+            List<ExeObjDependency> lists =   testObject.parse().getDependencies();
+            if(lists != null && lists.isEmpty() && m_inputDependencies.size() > 0)
+            {
+                System.out.println("No Input Dependency Returned");
+                m_result.setPassed(false);
+            }
+            
             for(ExeObjDependency dep : lists)
             {
                 if(!m_inputDependencies.contains(dep.getDependencyName()))
                 {
-                    System.out.println("Dependency " + dep + "Not Found");
+                    System.out.println("Dependency " + dep + " Not Found");
                     m_result.setPassed(false);
                 } else
                     m_inputDependencies.remove(dep.getDependencyName());
@@ -80,14 +96,15 @@ public class FSysTestCase implements ITestCase {
             
             for(String notCheckedDependencies : m_inputDependencies)
             {
-                System.out.println("Dependency " + notCheckedDependencies + "not returned ");
+                System.out.println("Dependency " + notCheckedDependencies + " not returned ");
                 m_result.setPassed(false);
             }
-            
+          m_result.appendMessage(baos.toString());
           System.setOut(old_ps);
         } catch (Exception ex) {
           ex.printStackTrace();
         }
+        
         return m_result;
     }
 
@@ -96,6 +113,7 @@ public class FSysTestCase implements ITestCase {
         return m_testName;
     }
     
+    @Override
     public void setTestName(String name)
     {
         this.m_testName = name;
