@@ -19,6 +19,10 @@
 package edu.syr.bytecast.fsys.elf;
 
 import edu.syr.bytecast.fsys.*;
+import edu.syr.bytecast.interfaces.fsys.ExeObj;
+import edu.syr.bytecast.interfaces.fsys.ExeObjDependency;
+import edu.syr.bytecast.interfaces.fsys.ExeObjSegment;
+import edu.syr.bytecast.interfaces.fsys.IBytecastFsys;
 import java.io.*;
 import java.util.*;
 

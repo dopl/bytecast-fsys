@@ -18,8 +18,8 @@
 
 package edu.syr.bytecast.fsys.test.implementation;
 
-import edu.syr.bytecast.fsys.ExeObjDependency;
-import edu.syr.bytecast.fsys.IBytecastFsys;
+import edu.syr.bytecast.interfaces.fsys.ExeObjDependency;
+import edu.syr.bytecast.interfaces.fsys.IBytecastFsys;
 import edu.syr.bytecast.fsys.elf.ElfExeObjParser;
 import edu.syr.bytecast.fsys.test.interfaces.ITestCase;
 import java.io.ByteArrayOutputStream;
