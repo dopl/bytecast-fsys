@@ -18,7 +18,6 @@
 
 package edu.syr.bytecast.fsys.test.implementation;
 
-import edu.syr.bytecast.interfaces.fsys.ExeObjDependency;
 import edu.syr.bytecast.interfaces.fsys.IBytecastFsys;
 import edu.syr.bytecast.fsys.elf.ElfExeObjParser;
 import edu.syr.bytecast.fsys.test.interfaces.ITestCase;
@@ -76,29 +75,29 @@ public class FSysTestCase implements ITestCase {
             
             IBytecastFsys testObject = new ElfExeObjParser();
             testObject.setFilepath(m_inputFilePath);
-
-            List<ExeObjDependency> lists =   testObject.parse().getDependencies();
-            if(lists != null && lists.isEmpty() && m_inputDependencies.size() > 0)
-            {
-                System.out.println("No Input Dependency Returned");
-                m_result.setPassed(false);
-            }
-            
-            for(ExeObjDependency dep : lists)
-            {
-                if(!m_inputDependencies.contains(dep.getDependencyName()))
-                {
-                    System.out.println("Dependency " + dep + " Not Found");
-                    m_result.setPassed(false);
-                } else
-                    m_inputDependencies.remove(dep.getDependencyName());
-            }
-            
-            for(String notCheckedDependencies : m_inputDependencies)
-            {
-                System.out.println("Dependency " + notCheckedDependencies + " not returned ");
-                m_result.setPassed(false);
-            }
+//
+//            List<ExeObjDependency> lists =   testObject.parse().getDependencies();
+//            if(lists != null && lists.isEmpty() && m_inputDependencies.size() > 0)
+//            {
+//                System.out.println("No Input Dependency Returned");
+//                m_result.setPassed(false);
+//            }
+//            
+//            for(ExeObjDependency dep : lists)
+//            {
+//                if(!m_inputDependencies.contains(dep.getDependencyName()))
+//                {
+//                    System.out.println("Dependency " + dep + " Not Found");
+//                    m_result.setPassed(false);
+//                } else
+//                    m_inputDependencies.remove(dep.getDependencyName());
+//            }
+//            
+//            for(String notCheckedDependencies : m_inputDependencies)
+//            {
+//                System.out.println("Dependency " + notCheckedDependencies + " not returned ");
+//                m_result.setPassed(false);
+//            }
           m_result.appendMessage(baos.toString());
           System.setOut(old_ps);
         } catch (Exception ex) {

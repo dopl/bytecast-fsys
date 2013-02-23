@@ -20,7 +20,6 @@ package edu.syr.bytecast.fsys.elf;
 
 import edu.syr.bytecast.fsys.*;
 import edu.syr.bytecast.interfaces.fsys.ExeObj;
-import edu.syr.bytecast.interfaces.fsys.ExeObjDependency;
 import edu.syr.bytecast.interfaces.fsys.ExeObjSegment;
 import edu.syr.bytecast.interfaces.fsys.IBytecastFsys;
 import java.io.*;
@@ -112,7 +111,7 @@ public class ElfExeObjParser implements IBytecastFsys {
                 //Generate the ExeObj segments from the ELF segments
                 ret.setSegments(generateSegments(prog_header,elf_file_parser));
 
-                ret.setDependencies(resolveDependencies(prog_header, elf_file_parser, ret, elf_header.e_ident[4]));
+                //ret.setDependencies(resolveDependencies(prog_header, elf_file_parser, ret, elf_header.e_ident[4]));
             }
             
         }
@@ -208,62 +207,62 @@ public class ElfExeObjParser implements IBytecastFsys {
         
         return ret;
     }
-    
-    public List<ExeObjDependency> resolveDependencies(ElfProgramHeaderStruct prog_header, 
-                                                      ElfFileParser file_parser, 
-                                                      ExeObj exe_obj,
-                                                      int arch) throws Exception
-    {
-        for(int i = 0; i < prog_header.m_headerEntries.size(); i++)
-        {
-            ElfProgramHeaderEntryStruct entry = prog_header.m_headerEntries.get(i);
-            
-            if(entry.p_type ==  entry.PT_DYNAMIC)
-            {
-                ElfDynamicTableParser dt_parser = new ElfDynamicTableParser(arch);
-                ElfDynamicTableStruct dt = dt_parser.parse(file_parser.getSegment(i));
-                return resolveDependencies(dt, exe_obj);
-            }
-        }
-        
-        return new ArrayList<ExeObjDependency>();
-    }
-    
-    public List<ExeObjDependency> resolveDependencies(ElfDynamicTableStruct dt, ExeObj exe_obj) throws Exception
-    {
-        long str_tab_offset = 0;
-        long str_tab_size = 0;
-        List<ExeObjDependency> ret = new ArrayList<ExeObjDependency>();
-        for(int i = 0; i < dt.m_headerEntries.size(); i++)
-        {
-            ElfDynamicTableEntryStruct entry = dt.m_headerEntries.get(i);
-            if(entry.d_tag == entry.DT_STRTAB)
-            {
-                str_tab_offset = entry.d_ptr;
-            }
-            
-            if(entry.d_tag == entry.DT_STRSZ)
-            {
-                str_tab_size = entry.d_val;
-            }
-        }
-        
-        List<Byte> string_table = exe_obj.getBytesFromAddr(str_tab_offset, (int)str_tab_size);
-        
-        for(int i = 0; i < dt.m_headerEntries.size(); i++)
-        {
-            ElfDynamicTableEntryStruct entry = dt.m_headerEntries.get(i);
-            if(entry.d_tag == entry.DT_NEEDED)
-            {
-                ExeObjDependency dep = new ExeObjDependency();
-                String depName = BytecastFsysUtil.parseStringFromBytes(string_table, (int)entry.d_ptr);
-                dep.setDependencyName(depName);
-                ret.add(dep);
-            }           
-        }
-        
-        return ret;
-    }
+//    
+//    public List<ExeObjDependency> resolveDependencies(ElfProgramHeaderStruct prog_header, 
+//                                                      ElfFileParser file_parser, 
+//                                                      ExeObj exe_obj,
+//                                                      int arch) throws Exception
+//    {
+//        for(int i = 0; i < prog_header.m_headerEntries.size(); i++)
+//        {
+//            ElfProgramHeaderEntryStruct entry = prog_header.m_headerEntries.get(i);
+//            
+//            if(entry.p_type ==  entry.PT_DYNAMIC)
+//            {
+//                ElfDynamicTableParser dt_parser = new ElfDynamicTableParser(arch);
+//                ElfDynamicTableStruct dt = dt_parser.parse(file_parser.getSegment(i));
+//                return resolveDependencies(dt, exe_obj);
+//            }
+//        }
+//        
+//        return new ArrayList<ExeObjDependency>();
+//    }
+//    
+//    public List<ExeObjDependency> resolveDependencies(ElfDynamicTableStruct dt, ExeObj exe_obj) throws Exception
+//    {
+//        long str_tab_offset = 0;
+//        long str_tab_size = 0;
+//        List<ExeObjDependency> ret = new ArrayList<ExeObjDependency>();
+//        for(int i = 0; i < dt.m_headerEntries.size(); i++)
+//        {
+//            ElfDynamicTableEntryStruct entry = dt.m_headerEntries.get(i);
+//            if(entry.d_tag == entry.DT_STRTAB)
+//            {
+//                str_tab_offset = entry.d_ptr;
+//            }
+//            
+//            if(entry.d_tag == entry.DT_STRSZ)
+//            {
+//                str_tab_size = entry.d_val;
+//            }
+//        }
+//        
+//        List<Byte> string_table = exe_obj.getBytesFromAddr(str_tab_offset, (int)str_tab_size);
+//        
+//        for(int i = 0; i < dt.m_headerEntries.size(); i++)
+//        {
+//            ElfDynamicTableEntryStruct entry = dt.m_headerEntries.get(i);
+//            if(entry.d_tag == entry.DT_NEEDED)
+//            {
+//                ExeObjDependency dep = new ExeObjDependency();
+//                String depName = BytecastFsysUtil.parseStringFromBytes(string_table, (int)entry.d_ptr);
+//                dep.setDependencyName(depName);
+//                ret.add(dep);
+//            }           
+//        }
+//        
+//        return ret;
+//    }
     
     public static void main(String args[]) {
         ElfExeObjParser elf_parser = new ElfExeObjParser(false);
