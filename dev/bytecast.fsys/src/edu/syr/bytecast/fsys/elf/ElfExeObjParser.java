@@ -97,6 +97,7 @@ public class ElfExeObjParser implements IBytecastFsys {
                 
                 //Generate the ExeObj segments from the sections
                 ret.setSegments(generateSegments(sect_header,elf_file_parser,elf_header.e_shstrndx));
+                
             }
             else
             {
@@ -207,6 +208,7 @@ public class ElfExeObjParser implements IBytecastFsys {
         
         return ret;
     }
+
 //    
 //    public List<ExeObjDependency> resolveDependencies(ElfProgramHeaderStruct prog_header, 
 //                                                      ElfFileParser file_parser, 
@@ -264,12 +266,14 @@ public class ElfExeObjParser implements IBytecastFsys {
 //        return ret;
 //    }
     
+
     public static void main(String args[]) {
         ElfExeObjParser elf_parser = new ElfExeObjParser(false);
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
 
-        elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
+        //elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
+        elf_parser.setFilepath("../../documents/testcase1_input_files/a.out");
         try {
             ExeObj exeObj = elf_parser.parse();
             exeObj.printExeObj();

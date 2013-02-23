@@ -19,7 +19,6 @@
 package edu.syr.bytecast.fsys.elf;
 
 import edu.syr.bytecast.fsys.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
@@ -175,7 +174,7 @@ public class ElfFileParser {
         ElfFileParser elf_parser = new ElfFileParser();
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
-        elf_parser.setFilePath("/home/adodds/code/bytecast/bytecast-fsys/documents/testcase1_input_files/a.out");
+        elf_parser.setFilePath("../../documents/testcase1_input_files/a.out");
 
         try {
             elf_parser.attach();

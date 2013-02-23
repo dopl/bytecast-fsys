@@ -83,7 +83,7 @@ public class BytecastFsysUtil {
 //             System.out.println("Entry "+i+": " + tmp.get(i));
 //        
 //     }
-    public String searchForFile(String path, String name){
+    public static String searchForFile(String path, String name){
         String ret = "No File Found";
         File file_contents = new File(path);         
         //see if the path is a directory. 
@@ -97,13 +97,13 @@ public class BytecastFsysUtil {
         return ret;
     }
     
-    private String appendPathName(String path, String name){
+    private static String appendPathName(String path, String name){
         String ret = "";
         ret = path + "/" + name;
         return ret;
     }
     
-    private String bfsSearch(File filein, String name)
+    private static String bfsSearch(File filein, String name)
     {
         String ret = "";
         
@@ -115,14 +115,13 @@ public class BytecastFsysUtil {
             File dir_contents = q.remove();
             String[] folder_contents = dir_contents.list();
             
-            
-            
             //search if the file is in the current directory.
             for(int i = 0; i < folder_contents.length; i++)
             {
                 if(folder_contents[i].equals(name))
                 {
-                    ret = appendPathName(dir_contents.getPath(),name);
+                    // ret = appendPathName(dir_contents.getPath(),name);
+                    ret = dir_contents.getPath(); 
                     return ret;
                 }
                 
