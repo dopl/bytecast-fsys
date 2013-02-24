@@ -122,6 +122,19 @@ public class ElfExeObjParser implements IBytecastFsys {
         return ret;
     }
 
+    private List<Byte> getMainStringTable(ElfSectionHeaderStruct sh, ElfFileParser fparser, int sh_str_table_idx) throws IOException
+    {
+        for(int i = 0; i < sh.m_headerEntries.size();i++)
+        {
+            ElfSectionHeaderEntryStruct entry = sh.m_headerEntries.get(i);
+            if(entry.sh_type == entry.SHT_STRTAB && i != sh_str_table_idx)
+            {
+                return fparser.getBytes(entry.sh_offset, (int)entry.sh_size);
+            }
+        }
+        
+        return new ArrayList<Byte>();
+    }
     //Determines if a section is executable base on the eh_flags.
     private boolean isExecutableSection(long flags)
     {
@@ -205,6 +218,27 @@ public class ElfExeObjParser implements IBytecastFsys {
         }
         
         return ret;
+    }
+    
+    private List<ExeObjFunction> generateFunctions(ElfSymbolTableStruct sym_table, List<Byte> str_table)
+    {
+       List<ExeObjFunction> ret = new ArrayList();
+       
+       for(int i = 0; i < sym_table.m_symbolEntries.size();i++)
+       {
+           ElfSymbolTableEntryStruct entry = sym_table.m_symbolEntries.get(i);
+           if((entry.st_info&0x0f) == entry.STT_FUNC)
+           {
+               ExeObjFunction exObjFunc = new ExeObjFunction();
+               
+               exObjFunc.setName(BytecastFsysUtil.parseStringFromBytes(str_table, entry.st_name));
+               exObjFunc.setSize((int)entry.st_size);
+               exObjFunc.setStartAddress(entry.st_shndx);
+               
+               ret.add(exObjFunc);
+           }
+       }
+       return ret;
     }
 
 //    

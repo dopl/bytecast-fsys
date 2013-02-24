@@ -27,25 +27,40 @@ public class ElfSymbolTableParser {
     public ElfSymbolTableParser(int arch) throws IOException {
         m_arch = arch;
         if(m_arch == ElfElfHeaderStruct.ELFCLASS32) {
-            m_entrySize     = ElfProgramHeaderEntryStruct.ELF32_ENTRY_SIZE;
-            m_fieldLengths  = ElfProgramHeaderEntryStruct.ELF32_FIELD_SIZES;
+            m_entrySize     = ElfSymbolTableEntryStruct.ELF32_ENTRY_SIZE;
+            m_fieldLengths  = ElfSymbolTableEntryStruct.ELF32_FIELD_SIZES;
         } else if(m_arch == ElfElfHeaderStruct.ELFCLASS64) {
-            m_entrySize     = ElfProgramHeaderEntryStruct.ELF64_ENTRY_SIZE;
-            m_fieldLengths  = ElfProgramHeaderEntryStruct.ELF64_FIELD_SIZES;
+            m_entrySize     = ElfSymbolTableEntryStruct.ELF64_ENTRY_SIZE;
+            m_fieldLengths  = ElfSymbolTableEntryStruct.ELF64_FIELD_SIZES;
         } else {
             throw new IOException("Unsupported ELF architecture. ELF32 or "
                                     + "ELF64 supported only"); 
         }       
     }
 
-
     public ElfSymbolTableStruct parse(List<Byte> data) {
         ElfSymbolTableStruct ret = new ElfSymbolTableStruct();
+ 
+        for (int i = 0; i < data.size() / m_entrySize; i++) {
+
+            ret.m_symbolEntries.add(parseEntry(data, i));
+        }
+        
+        return ret;
+    }
+ 
+    public ElfSymbolTableEntryStruct parseEntry(List<Byte> data,int index) {
+        ElfSymbolTableEntryStruct ret = new ElfSymbolTableEntryStruct();
+    
         int bytes_consumed = 0;
         
         for (int i = 0; i < m_fieldLengths.length; i++) {
             
-            long parseResult = BytecastFsysUtil.bytesToLong(bytes_consumed,
+            //Determine where in "data" the next field starts
+            int byte_index = index*m_entrySize+bytes_consumed;
+            
+            
+            long parseResult = BytecastFsysUtil.bytesToLong(byte_index,
                                                             m_fieldLengths[i],
                                                             data);
             bytes_consumed += m_fieldLengths[i];
@@ -78,7 +93,27 @@ public class ElfSymbolTableParser {
         
         return ret;
     }
+    
+    public void printSymbolTable(ElfSymbolTableStruct input)
+    {
+        for(int i = 0; i < input.m_symbolEntries.size(); i++)
+        {            
+            System.out.println("------------------------------------------");
+            System.out.println("Printing Symbol Table Entry " + i + ":");         
+            System.out.println("------------------------------------------");
+            printSymbolEntry(input.m_symbolEntries.get(i));
+        }
+    }
 
+    public void printSymbolEntry(ElfSymbolTableEntryStruct input)
+    {
+        System.out.printf("st_name: %d\n", input.st_name);
+        System.out.printf("st_info: %d\n", input.st_info);
+        System.out.printf("st_other: %016x\n", input.st_other);
+        System.out.printf("st_shndx: %016x\n", input.st_shndx);
+        System.out.printf("st_value: %016x\n", input.st_value);
+        System.out.printf("st_size: %016x\n", input.st_size);  
+    }
     private int   m_arch;
     private short m_entrySize; 
     private int[] m_fieldLengths;   
