@@ -211,14 +211,13 @@ public class ElfFileParser {
 
     public ElfSymbolTableStruct getSymTable() throws IOException
     {
-        ElfSymbolTableStruct sts = new ElfSymbolTableStruct();
         
         if(m_sectionHeader != null)
         {
             for(int i = 0; i < m_sectionHeader.m_headerEntries.size(); i++)
             {
                 ElfSectionHeaderEntryStruct she = m_sectionHeader.m_headerEntries.get(i);
-                if(she.sh_flags == ElfSectionHeaderEntryStruct.SHT_SYMTAB) 
+                if(she.sh_type == ElfSectionHeaderEntryStruct.SHT_SYMTAB) 
                 {
                     ElfSymbolTableParser pst = new ElfSymbolTableParser(m_elfHeader.e_ident[4]);
                     return pst.parse(getBytes(she.sh_offset,(int)she.sh_size));
