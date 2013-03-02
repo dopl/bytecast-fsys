@@ -28,7 +28,6 @@ public class ElfFileParser {
     private BytecastFileReader m_bytecastFileReader;
     private ElfProgramHeaderStruct m_programHeader;
     private ElfSectionHeaderStruct m_sectionHeader;
-    
     //constructor
 
     ElfFileParser() {
@@ -91,7 +90,7 @@ public class ElfFileParser {
         //use e_ident field to find out if its 64 or 32 bit elf file. 
         ElfProgramHeaderParser phparser = new ElfProgramHeaderParser(m_elfHeader.e_ident[4]);
         m_programHeader = phparser.parse(bin_elf_prog_header);
-
+        
         return m_programHeader;
     }
 
@@ -172,6 +171,19 @@ public class ElfFileParser {
     {
         return m_bytecastFileReader.getContents(offset,size);
     }
+    public List<Byte> getBytesVAddr(long vAddr,int size) throws IOException
+    {
+        for(int i = 0; i < m_programHeader.m_headerEntries.size(); i++)
+        {
+            ElfProgramHeaderEntryStruct phs = m_programHeader.m_headerEntries.get(i);
+            if(vAddr >= phs.p_vaddr && vAddr < phs.p_vaddr + phs.p_memsz)
+            {
+                
+                return m_bytecastFileReader.getContents(vAddr - phs.p_vaddr + phs.p_offset,size);
+            }
+        }
+       return null; 
+    }
     
     public List<Byte> getMainStringTable() throws IOException
     {
@@ -200,10 +212,25 @@ public class ElfFileParser {
     public ElfSymbolTableStruct getSymTable() throws IOException
     {
         ElfSymbolTableStruct sts = new ElfSymbolTableStruct();
-        if(m_programHeader != null)
+        
+        if(m_sectionHeader != null)
         {
+            for(int i = 0; i < m_sectionHeader.m_headerEntries.size(); i++)
+            {
+                ElfSectionHeaderEntryStruct she = m_sectionHeader.m_headerEntries.get(i);
+                if(she.sh_flags == ElfSectionHeaderEntryStruct.SHT_SYMTAB) 
+                {
+                    ElfSymbolTableParser pst = new ElfSymbolTableParser(m_elfHeader.e_ident[4]);
+                    return pst.parse(getBytes(she.sh_offset,(int)she.sh_size));
+                }
+            }
         }
-        return sts;
+        else if(m_programHeader != null)
+        {
+            
+        } 
+        
+        return null;
     }
     
     public ElfSectionHeaderEntryStruct getSectionHeaderEntry(int index)
