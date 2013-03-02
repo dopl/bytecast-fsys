@@ -170,19 +170,31 @@ public class ElfFileParser {
         return m_bytecastFileReader.getContents(offset,size);
     }
     
-    private List<Byte> getMainStringTable(ElfSectionHeaderStruct sh, ElfFileParser fparser, int sh_str_table_idx) throws IOException
+    public List<Byte> getMainStringTable() throws IOException
     {
-        for(int i = 0; i < sh.m_headerEntries.size();i++)
+        //find the main string table. This is done by finding the string section that 
+        //doesn't have the elf header string table index. 
+        for(int i = 0; i < m_sectionHeader.m_headerEntries.size();i++)
         {
-            ElfSectionHeaderEntryStruct entry = sh.m_headerEntries.get(i);
-            if(entry.sh_type == entry.SHT_STRTAB && i != sh_str_table_idx)
+            ElfSectionHeaderEntryStruct entry = m_sectionHeader.m_headerEntries.get(i);
+            if(entry.sh_type == entry.SHT_STRTAB && i != m_elfHeader.e_shstrndx)
             {
-                return fparser.getBytes(entry.sh_offset, (int)entry.sh_size);
+                return getBytes(entry.sh_offset, (int)entry.sh_size);
             }
         }
         
         return new ArrayList<Byte>();
     }   
+    
+    public List<Byte> getSectionStringTable() throws IOException
+    {
+        return new ArrayList<Byte>();
+    }
+    
+    public List<Byte> getSymTable() throws IOException
+    {
+        return new ArrayList<Byte>();
+    }
     
     public static void main(String args[]) {
         ElfFileParser elf_parser = new ElfFileParser();
