@@ -217,7 +217,7 @@ public class ElfExeObjParser implements IBytecastFsys {
                
                exObjFunc.setName(BytecastFsysUtil.parseStringFromBytes(str_table, entry.st_name));
                exObjFunc.setSize((int)entry.st_size);
-               exObjFunc.setStartAddress(m_elfFileParser.getSectionHeaderEntry(entry.st_shndx).sh_addr);
+               exObjFunc.setStartAddress(entry.st_value);//m_elfFileParser.getSectionHeaderEntry(entry.st_shndx).sh_addr);
                
                ret.add(exObjFunc);
            }
@@ -232,11 +232,13 @@ public class ElfExeObjParser implements IBytecastFsys {
         //elf_parser.setFilepath("/lib32/libc.so.6");
 
         //elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
-        elf_parser.setFilepath("../../documents/testcase1_input_files/a.out");
+        elf_parser.setFilepath("../../../bytecast-documents/AsciiManip01Prototype/a.out.static");
         try {
-            ExeObj exeObj = elf_parser.parse();
+            //ExeObj exeObj = elf_parser.parse();
+            //ExeObjIOUtils.printExeObj(exeObj);
+           // ExeObjIOUtils.writeToFile(exeObj, "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
+            ExeObj exeObj = ExeObjIOUtils.readFromFile( "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
             ExeObjIOUtils.printExeObj(exeObj);
-
         } catch (FileNotFoundException e) {
             System.out.println("Could not parse file.");
         } catch (Exception e) {
