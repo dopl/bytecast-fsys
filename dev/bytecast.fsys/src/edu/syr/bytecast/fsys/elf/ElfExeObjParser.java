@@ -25,13 +25,14 @@ import java.util.*;
 
 public class ElfExeObjParser implements IBytecastFsys {
     
-    private List<Byte> m_stringTable; 
-    private List<Byte> m_symTable;
+    ElfFileParser           m_elfFileParser;
+    ElfSectionHeaderStruct  m_sectionHeaders;
+    List<Byte>        m_stringTable;
     
     //Constructor
     public ElfExeObjParser()
     {
-        m_preferSections = false;
+        m_preferSections = true;
     }
     
     //Constructor
@@ -75,47 +76,34 @@ public class ElfExeObjParser implements IBytecastFsys {
     //Public "parse" function.. parses the specified ELF file.
     @Override
     public ExeObj parse() throws Exception {
-        ElfFileParser elf_file_parser = new ElfFileParser();
-        elf_file_parser.setFilePath(m_filePath);
+        m_elfFileParser = new ElfFileParser();
+        m_elfFileParser.setFilePath(m_filePath);
         ExeObj ret = new ExeObj();
         
         //try to open the ELF file
-        if(elf_file_parser.attach())
+        if(m_elfFileParser.attach())
         {
             //Pull the ELF header
-            ElfElfHeaderStruct elf_header = elf_file_parser.getElfHeader();
+            ElfElfHeaderStruct elf_header = m_elfFileParser.getElfHeader();
             ret.setEntryPointIndex(elf_header.e_entry);
+            
             //Pull either the sections or segments
             if(wantSections(elf_header.e_shnum, elf_header.e_phnum))
             {
-                
-                //Get the section header and sections
-                ElfSectionHeaderStruct sect_header = elf_file_parser.getSectionHeader();
-                
-                //NOTE: We can probably save memory by reading the sections as
-                //we need them rather than all at once.
-                List<List<Byte>> sections = elf_file_parser.getSections();
+                ElfSectionHeaderStruct sect_header = m_elfFileParser.getSectionHeader();
                 
                 //Generate the ExeObj segments from the sections
-                ret.setSegments(generateSegments(sect_header,elf_file_parser,elf_header.e_shstrndx));
+                ret.setSegments(generateSegmentsFromSections(sect_header));
                 
             }
             else
             {
-                //Get the segment header and sections.
-                ElfProgramHeaderStruct prog_header = elf_file_parser.getProgramHeader();
-                
-                
-                //NOTE: We can probably save memory by reading the segments as
-                //we need them rather than all at once.
-                List<List<Byte>> segments = elf_file_parser.getSegments();
-                
                 //Generate the ExeObj segments from the ELF segments
-                ret.setSegments(generateSegments(prog_header,elf_file_parser));
+                ret.setSegments(generateSegmentsFromSegments());
 
-                //ret.setDependencies(resolveDependencies(prog_header, elf_file_parser, ret, elf_header.e_ident[4]));
             }
-            
+ 
+            ret.setFunctions(generateFunctions());           
         }
         else
         {
@@ -164,15 +152,12 @@ public class ElfExeObjParser implements IBytecastFsys {
     }
     
     //Generates Segments from Section Headers.
-    private List<ExeObjSegment> generateSegments(ElfSectionHeaderStruct sect_header,
-                                                 ElfFileParser file_parser,
-                                                 int sh_strtab_idx) throws IOException
+    private List<ExeObjSegment> generateSegmentsFromSections(ElfSectionHeaderStruct sect_header) throws IOException
     {
         List<ExeObjSegment> ret = new ArrayList<ExeObjSegment>(); 
         
-        List<Byte> sh_string_table = file_parser.getSection(sh_strtab_idx);
-        
-        
+        List<Byte> sh_string_table = m_elfFileParser.getSectionStringTable();
+
         //Now find executable sections.
         for(int i = 0; i < sect_header.m_headerEntries.size(); i++)
         {
@@ -181,7 +166,7 @@ public class ElfExeObjParser implements IBytecastFsys {
             {
                 ExeObjSegment exe_seg = new ExeObjSegment();
                 exe_seg.setLabel(getLabel(sh_string_table, entry.sh_name, i));
-                exe_seg.setBytes(file_parser.getSection(i));
+                exe_seg.setBytes(m_elfFileParser.getSection(i));
                 exe_seg.setStartAddress(entry.sh_addr);
                 ret.add(exe_seg);
             }
@@ -190,9 +175,9 @@ public class ElfExeObjParser implements IBytecastFsys {
     }
     
     //Generate the segments from the program header and segments.
-    private List<ExeObjSegment> generateSegments(ElfProgramHeaderStruct prog_header,
-                                                 ElfFileParser file_parser) throws IOException
+    private List<ExeObjSegment> generateSegmentsFromSegments() throws IOException
     {
+        ElfProgramHeaderStruct prog_header = m_elfFileParser.getProgramHeader();
         List<ExeObjSegment> ret = new ArrayList<ExeObjSegment>();
         
         for(int i = 0; i < prog_header.m_headerEntries.size(); i++)
@@ -202,7 +187,7 @@ public class ElfExeObjParser implements IBytecastFsys {
             {
                 ExeObjSegment exe_seg = new ExeObjSegment();
                 exe_seg.setLabel(getLabel(null, -1, i));
-                exe_seg.setBytes(file_parser.getSegment(i));
+                exe_seg.setBytes(m_elfFileParser.getSegment(i));
                 exe_seg.setStartAddress(entry.p_vaddr);
                 ret.add(exe_seg);               
             }
@@ -211,87 +196,35 @@ public class ElfExeObjParser implements IBytecastFsys {
         return ret;
     }
     
-    private List<ExeObjFunction> generateFunctions(ElfSymbolTableStruct sym_table, List<Byte> str_table)
+    private List<ExeObjFunction> generateFunctions() throws IOException
     {
        List<ExeObjFunction> ret = new ArrayList();
+       
+       ElfSymbolTableStruct sym_table = m_elfFileParser.getSymTable();
+       List<Byte> str_table = m_elfFileParser.getMainStringTable();
        
        for(int i = 0; i < sym_table.m_symbolEntries.size();i++)
        {
            ElfSymbolTableEntryStruct entry = sym_table.m_symbolEntries.get(i);
-           if((entry.st_info&0x0f) == entry.STT_FUNC)
+           int st_info_masked = (int)entry.st_info&0x0f;
+           
+           if(st_info_masked == entry.STT_FUNC)
            {
                ExeObjFunction exObjFunc = new ExeObjFunction();
                
                exObjFunc.setName(BytecastFsysUtil.parseStringFromBytes(str_table, entry.st_name));
                exObjFunc.setSize((int)entry.st_size);
-               exObjFunc.setStartAddress(entry.st_shndx);
+               exObjFunc.setStartAddress(m_elfFileParser.getSectionHeaderEntry(entry.st_shndx).sh_addr);
                
                ret.add(exObjFunc);
            }
        }
        return ret;
     }
-
-//    
-//    public List<ExeObjDependency> resolveDependencies(ElfProgramHeaderStruct prog_header, 
-//                                                      ElfFileParser file_parser, 
-//                                                      ExeObj exe_obj,
-//                                                      int arch) throws Exception
-//    {
-//        for(int i = 0; i < prog_header.m_headerEntries.size(); i++)
-//        {
-//            ElfProgramHeaderEntryStruct entry = prog_header.m_headerEntries.get(i);
-//            
-//            if(entry.p_type ==  entry.PT_DYNAMIC)
-//            {
-//                ElfDynamicTableParser dt_parser = new ElfDynamicTableParser(arch);
-//                ElfDynamicTableStruct dt = dt_parser.parse(file_parser.getSegment(i));
-//                return resolveDependencies(dt, exe_obj);
-//            }
-//        }
-//        
-//        return new ArrayList<ExeObjDependency>();
-//    }
-//    
-//    public List<ExeObjDependency> resolveDependencies(ElfDynamicTableStruct dt, ExeObj exe_obj) throws Exception
-//    {
-//        long str_tab_offset = 0;
-//        long str_tab_size = 0;
-//        List<ExeObjDependency> ret = new ArrayList<ExeObjDependency>();
-//        for(int i = 0; i < dt.m_headerEntries.size(); i++)
-//        {
-//            ElfDynamicTableEntryStruct entry = dt.m_headerEntries.get(i);
-//            if(entry.d_tag == entry.DT_STRTAB)
-//            {
-//                str_tab_offset = entry.d_ptr;
-//            }
-//            
-//            if(entry.d_tag == entry.DT_STRSZ)
-//            {
-//                str_tab_size = entry.d_val;
-//            }
-//        }
-//        
-//        List<Byte> string_table = exe_obj.getBytesFromAddr(str_tab_offset, (int)str_tab_size);
-//        
-//        for(int i = 0; i < dt.m_headerEntries.size(); i++)
-//        {
-//            ElfDynamicTableEntryStruct entry = dt.m_headerEntries.get(i);
-//            if(entry.d_tag == entry.DT_NEEDED)
-//            {
-//                ExeObjDependency dep = new ExeObjDependency();
-//                String depName = BytecastFsysUtil.parseStringFromBytes(string_table, (int)entry.d_ptr);
-//                dep.setDependencyName(depName);
-//                ret.add(dep);
-//            }           
-//        }
-//        
-//        return ret;
-//    }
     
 
     public static void main(String args[]) {
-        ElfExeObjParser elf_parser = new ElfExeObjParser(false);
+        ElfExeObjParser elf_parser = new ElfExeObjParser(true);
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
 
