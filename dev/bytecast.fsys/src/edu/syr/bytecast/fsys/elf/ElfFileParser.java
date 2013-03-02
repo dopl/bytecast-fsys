@@ -170,6 +170,20 @@ public class ElfFileParser {
         return m_bytecastFileReader.getContents(offset,size);
     }
     
+    private List<Byte> getMainStringTable(ElfSectionHeaderStruct sh, ElfFileParser fparser, int sh_str_table_idx) throws IOException
+    {
+        for(int i = 0; i < sh.m_headerEntries.size();i++)
+        {
+            ElfSectionHeaderEntryStruct entry = sh.m_headerEntries.get(i);
+            if(entry.sh_type == entry.SHT_STRTAB && i != sh_str_table_idx)
+            {
+                return fparser.getBytes(entry.sh_offset, (int)entry.sh_size);
+            }
+        }
+        
+        return new ArrayList<Byte>();
+    }   
+    
     public static void main(String args[]) {
         ElfFileParser elf_parser = new ElfFileParser();
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");

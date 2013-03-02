@@ -24,7 +24,10 @@ import java.io.*;
 import java.util.*;
 
 public class ElfExeObjParser implements IBytecastFsys {
-
+    
+    private List<Byte> m_stringTable; 
+    private List<Byte> m_symTable;
+    
     //Constructor
     public ElfExeObjParser()
     {
@@ -122,19 +125,7 @@ public class ElfExeObjParser implements IBytecastFsys {
         return ret;
     }
 
-    private List<Byte> getMainStringTable(ElfSectionHeaderStruct sh, ElfFileParser fparser, int sh_str_table_idx) throws IOException
-    {
-        for(int i = 0; i < sh.m_headerEntries.size();i++)
-        {
-            ElfSectionHeaderEntryStruct entry = sh.m_headerEntries.get(i);
-            if(entry.sh_type == entry.SHT_STRTAB && i != sh_str_table_idx)
-            {
-                return fparser.getBytes(entry.sh_offset, (int)entry.sh_size);
-            }
-        }
-        
-        return new ArrayList<Byte>();
-    }
+
     //Determines if a section is executable base on the eh_flags.
     private boolean isExecutableSection(long flags)
     {
@@ -309,6 +300,7 @@ public class ElfExeObjParser implements IBytecastFsys {
         try {
             ExeObj exeObj = elf_parser.parse();
             ExeObjIOUtils.printExeObj(exeObj);
+
         } catch (FileNotFoundException e) {
             System.out.println("Could not parse file.");
         } catch (Exception e) {
