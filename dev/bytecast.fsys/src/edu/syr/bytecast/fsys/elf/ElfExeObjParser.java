@@ -202,7 +202,10 @@ public class ElfExeObjParser implements IBytecastFsys {
        
        ElfSymbolTableStruct sym_table = m_elfFileParser.getSymTable();
        List<Byte> str_table = m_elfFileParser.getMainStringTable();
-       
+       for(int i = 0; i < str_table.size();i++)
+       {
+           System.out.println(str_table.get(i));
+       }
        for(int i = 0; i < sym_table.m_symbolEntries.size();i++)
        {
            ElfSymbolTableEntryStruct entry = sym_table.m_symbolEntries.get(i);
