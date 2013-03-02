@@ -187,12 +187,14 @@ public class ElfFileParser {
     
     public List<Byte> getMainStringTable() throws IOException
     {
+        List <Byte> sh_str_tab = getSectionStringTable();
+        
         //find the main string table. This is done by finding the string section that 
         //doesn't have the elf header string table index. 
         for(int i = 0; i < m_sectionHeader.m_headerEntries.size();i++)
         {
             ElfSectionHeaderEntryStruct entry = m_sectionHeader.m_headerEntries.get(i);
-            if(entry.sh_type == entry.SHT_STRTAB && i != m_elfHeader.e_shstrndx)
+            if(BytecastFsysUtil.parseStringFromBytes(sh_str_tab, entry.sh_name).equals(".strtab"))
             {
                 return getBytes(entry.sh_offset, (int)entry.sh_size);
             }
