@@ -191,24 +191,19 @@ public class ElfFileParser {
     
     public List<Byte> getSectionStringTable() throws IOException
     {
-        if(m_sectionHeader!= null)
-        {
-            return getBytes(m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_offset,
-                            (int)m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_size);
-        }
-        else 
-        {
-            return null;
-        }
+        return getBytes(m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_offset,
+                        (int)m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_size);
+
     }
         
 
-    public List<Byte> getSymTable() throws IOException
+    public ElfSymbolTableStruct getSymTable() throws IOException
     {
+        ElfSymbolTableStruct sts = new ElfSymbolTableStruct();
         if(m_programHeader != null)
         {
         }
-        return new ArrayList<Byte>();
+        return sts;
     }
     
     public ElfSectionHeaderEntryStruct getSectionHeaderEntry(int index)
