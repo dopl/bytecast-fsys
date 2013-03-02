@@ -33,6 +33,9 @@ public class ElfFileParser {
 
     ElfFileParser() {
         m_bytecastFileReader = new BytecastFileReader();
+        m_elfHeader = null;
+        m_programHeader = null;
+        m_sectionHeader = null;
     }
 
     //set file path of binary data
@@ -188,12 +191,34 @@ public class ElfFileParser {
     
     public List<Byte> getSectionStringTable() throws IOException
     {
+        if(m_sectionHeader!= null)
+        {
+            return getBytes(m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_offset,
+                            (int)m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_size);
+        }
+        else 
+        {
+            return null;
+        }
+    }
+        
+
+    public List<Byte> getSymTable() throws IOException
+    {
+        if(m_programHeader != null)
+        {
+        }
         return new ArrayList<Byte>();
     }
     
-    public List<Byte> getSymTable() throws IOException
+    public ElfSectionHeaderEntryStruct getSectionHeaderEntry(int index)
     {
-        return new ArrayList<Byte>();
+        return m_sectionHeader.m_headerEntries.get(index);
+    }
+    
+    public ElfProgramHeaderEntryStruct getProgramHeaderEntry(int index)
+    {
+        return m_programHeader.m_headerEntries.get(index); 
     }
     
     public static void main(String args[]) {
