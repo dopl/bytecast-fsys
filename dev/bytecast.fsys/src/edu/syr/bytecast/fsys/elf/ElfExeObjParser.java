@@ -202,10 +202,7 @@ public class ElfExeObjParser implements IBytecastFsys {
        
        ElfSymbolTableStruct sym_table = m_elfFileParser.getSymTable();
        List<Byte> str_table = m_elfFileParser.getMainStringTable();
-       for(int i = 0; i < str_table.size();i++)
-       {
-           System.out.println(str_table.get(i));
-       }
+
        for(int i = 0; i < sym_table.m_symbolEntries.size();i++)
        {
            ElfSymbolTableEntryStruct entry = sym_table.m_symbolEntries.get(i);
@@ -227,17 +224,17 @@ public class ElfExeObjParser implements IBytecastFsys {
     
 
     public static void main(String args[]) {
-        ElfExeObjParser elf_parser = new ElfExeObjParser(true);
+        ElfExeObjParser elf_parser = new ElfExeObjParser(false);
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
 
         //elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
-        elf_parser.setFilepath("../../../bytecast-documents/AsciiManip01Prototype/a.out.static");
+        elf_parser.setFilepath("../../../bytecast-documents/AsciiManip01Prototype/a.out");
         try {
-            //ExeObj exeObj = elf_parser.parse();
-            //ExeObjIOUtils.printExeObj(exeObj);
+            ExeObj exeObj = elf_parser.parse();
+            ExeObjIOUtils.printExeObj(exeObj);
            // ExeObjIOUtils.writeToFile(exeObj, "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
-            ExeObj exeObj = ExeObjIOUtils.readFromFile( "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
+           // ExeObj exeObj = ExeObjIOUtils.readFromFile( "../../../bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
             ExeObjIOUtils.printExeObj(exeObj);
         } catch (FileNotFoundException e) {
             System.out.println("Could not parse file.");

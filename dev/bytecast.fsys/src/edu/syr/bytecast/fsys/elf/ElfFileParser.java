@@ -171,14 +171,16 @@ public class ElfFileParser {
     {
         return m_bytecastFileReader.getContents(offset,size);
     }
+    
     public List<Byte> getBytesVAddr(long vAddr,int size) throws IOException
     {
+        //convert a virtual address from a program header to a file offset.
         for(int i = 0; i < m_programHeader.m_headerEntries.size(); i++)
         {
             ElfProgramHeaderEntryStruct phs = m_programHeader.m_headerEntries.get(i);
+            
             if(vAddr >= phs.p_vaddr && vAddr < phs.p_vaddr + phs.p_memsz)
             {
-                
                 return m_bytecastFileReader.getContents(vAddr - phs.p_vaddr + phs.p_offset,size);
             }
         }
@@ -187,6 +189,14 @@ public class ElfFileParser {
     
     public List<Byte> getMainStringTable() throws IOException
     {
+        //get the section headers if it is null. This will
+        //allow us to pull out the string table when the program
+        //headers are trying to be used.
+        if(m_sectionHeader == null)
+        {
+            getSectionHeader();
+        }
+        
         List <Byte> sh_str_tab = getSectionStringTable();
         
         //find the main string table. This is done by finding the string section that 
@@ -199,37 +209,44 @@ public class ElfFileParser {
                 return getBytes(entry.sh_offset, (int)entry.sh_size);
             }
         }
-        
-        return new ArrayList<Byte>();
+        return null;
     }   
     
     public List<Byte> getSectionStringTable() throws IOException
-    {
+    { 
+        //get the section headers if it is null. This will
+        //allow us to pull out the string table when the program
+        //headers are trying to be used.
+        if(m_sectionHeader == null)
+        {
+            getSectionHeader();
+        }
+        // pull out the section string table.
         return getBytes(m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_offset,
                         (int)m_sectionHeader.m_headerEntries.get(m_elfHeader.e_shstrndx).sh_size);
-
     }
         
 
     public ElfSymbolTableStruct getSymTable() throws IOException
     {
-        
-        if(m_sectionHeader != null)
+        //get the section headers if it is null. This will
+        //allow us to pull out the string table when the program
+        //headers are trying to be used.
+        if(m_sectionHeader == null)
         {
-            for(int i = 0; i < m_sectionHeader.m_headerEntries.size(); i++)
-            {
-                ElfSectionHeaderEntryStruct she = m_sectionHeader.m_headerEntries.get(i);
-                if(she.sh_type == ElfSectionHeaderEntryStruct.SHT_SYMTAB) 
-                {
-                    ElfSymbolTableParser pst = new ElfSymbolTableParser(m_elfHeader.e_ident[4]);
-                    return pst.parse(getBytes(she.sh_offset,(int)she.sh_size));
-                }
-            }
+            getSectionHeader();
         }
-        else if(m_programHeader != null)
+        
+        //find the with the symbol table type and parse the that section
+        for(int i = 0; i < m_sectionHeader.m_headerEntries.size(); i++)
         {
-            
-        } 
+           ElfSectionHeaderEntryStruct she = m_sectionHeader.m_headerEntries.get(i);
+           if(she.sh_type == ElfSectionHeaderEntryStruct.SHT_SYMTAB) 
+           {
+               ElfSymbolTableParser pst = new ElfSymbolTableParser(m_elfHeader.e_ident[4]);
+               return pst.parse(getBytes(she.sh_offset,(int)she.sh_size));
+           }
+       }
         
         return null;
     }
