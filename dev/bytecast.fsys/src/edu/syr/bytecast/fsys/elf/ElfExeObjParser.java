@@ -224,7 +224,7 @@ public class ElfExeObjParser implements IBytecastFsys {
     
 
     public static void main(String args[]) {
-        ElfExeObjParser elf_parser = new ElfExeObjParser(false);
+        ElfExeObjParser elf_parser = new ElfExeObjParser(true);
         //elf_parser.setFilepath("/home/adodds/code/bytecast-fsys/documents/testcase1_input_files/libc.so.6");
         //elf_parser.setFilepath("/lib32/libc.so.6");
 
@@ -233,9 +233,9 @@ public class ElfExeObjParser implements IBytecastFsys {
         try {
             ExeObj exeObj = elf_parser.parse();
             ExeObjIOUtils.printExeObj(exeObj);
-           // ExeObjIOUtils.writeToFile(exeObj, "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
-           // ExeObj exeObj = ExeObjIOUtils.readFromFile( "../../../bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
-            ExeObjIOUtils.printExeObj(exeObj);
+            //ExeObjIOUtils.writeToFile(exeObj, "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
+            //ExeObj readExeObj = ExeObjIOUtils.readFromFile( "../../../bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
+            //ExeObjIOUtils.printExeObj(readExeObj);
         } catch (FileNotFoundException e) {
             System.out.println("Could not parse file.");
         } catch (Exception e) {
