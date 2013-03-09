@@ -276,19 +276,19 @@ public class ElfFileParser {
         try {
             elf_parser.getElfHeader();
         } catch (IOException e) {
-            System.out.println("Could Parse Elf header.");
+            System.out.println("Could not Parse Elf header.");
         }
 
         try {
             elf_parser.getProgramHeader();
         } catch (IOException e) {
-            System.out.println("Could Parse Program header.");
+            System.out.println("Could not Parse Program header.");
         }
 
         try {
             elf_parser.getSectionHeader();
         } catch (IOException e) {
-            System.out.println("Could Parse Elf header.");
+            System.out.println("Could not Parse Elf header.");
         }
 
         try {
