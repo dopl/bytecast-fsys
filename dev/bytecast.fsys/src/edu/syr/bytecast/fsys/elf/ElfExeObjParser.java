@@ -139,8 +139,10 @@ public class ElfExeObjParser implements IBytecastFsys {
     //Generates a label for the segment.
     private String getLabel(List<Byte> string_table, int string_id, int sh_index)
     {
+        int idx = m_filePath.lastIndexOf("/");
+        String fname = idx >= 0 ? m_filePath.substring(idx+1) : m_filePath;
         
-        String ret = m_filePath + "_" + 
+        String ret = fname + "_" + 
                      sh_index;
         
         if(string_id != -1 && string_table != null)
@@ -233,7 +235,7 @@ public class ElfExeObjParser implements IBytecastFsys {
         try {
             ExeObj exeObj = elf_parser.parse();
             ExeObjIOUtils.printExeObj(exeObj);
-            //ExeObjIOUtils.writeToFile(exeObj, "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
+            ExeObjIOUtils.writeToFile(exeObj, "/home/shawn/code/bytecast/bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
             //ExeObj readExeObj = ExeObjIOUtils.readFromFile( "../../../bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
             //ExeObjIOUtils.printExeObj(readExeObj);
         } catch (FileNotFoundException e) {
