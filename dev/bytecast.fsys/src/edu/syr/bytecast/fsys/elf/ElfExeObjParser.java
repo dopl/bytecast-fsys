@@ -231,11 +231,11 @@ public class ElfExeObjParser implements IBytecastFsys {
         //elf_parser.setFilepath("/lib32/libc.so.6");
 
         //elf_parser.setFilepath("../../documents/testcase1_input_files/a.out.static");
-        elf_parser.setFilepath("../../../bytecast-documents/AsciiManip01Prototype/a.out.static");
+        elf_parser.setFilepath("../../../bytecast-documents/AsciiManip02Prototype/a.out.static");
         try {
             ExeObj exeObj = elf_parser.parse();
             ExeObjIOUtils.printExeObj(exeObj);
-            ExeObjIOUtils.writeToFile(exeObj, "../../../bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
+            ExeObjIOUtils.writeToFile(exeObj, "../../../bytecast-common/bytecast-common/test_input_files/fsys_mock2.eobj");
             //ExeObj readExeObj = ExeObjIOUtils.readFromFile( "../../../bytecast-common/bytecast-common/test_input_files/fsys_mock1.eobj");
             //ExeObjIOUtils.printExeObj(readExeObj);
         } catch (FileNotFoundException e) {
